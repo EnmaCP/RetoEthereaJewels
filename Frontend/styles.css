@@ -23,23 +23,33 @@ body {
     padding: 20px 40px;
     max-width: 1400px;
     margin: 0 auto;
+    gap: 30px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    justify-content: flex-end;
 }
 
 .logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: #c9a961;
-}
-
-.logo-text {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: flex-start;
+    min-width: 180px;
+}
+
+.logo img {
+    max-height: 70px;
+    width: auto;
+    display: block;
 }
 
 .search-bar {
     flex: 1;
-    margin: 0 40px;
+    min-width: 220px;
     display: flex;
     background-color: #e8e8e8;
     border-radius: 25px;
