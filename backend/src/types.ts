@@ -1,33 +1,80 @@
-export interface Product {
-  id: number;
-  name: string;
-  description?: string;
-  price: number;
-  stock: number;
-  image_url?: string;
-  active: boolean;
-}
-export interface Review {
-    id: number;
-    rating: number;
-    comment: string;
-    created_at: string;
-    username: string;
-}
-export interface CartItem{
-    product: Product;
-    quantity: number;
-}
-export interface Order{
-    id: number;
-    status: string;
-    total: string;
-    address: string;
-    created_at:string;
-}
-export interface Customer {
-  id: number;
-  username: string;
+export type RolUsuario = 'cliente' | 'empleado' | 'admin';
+export type TipoFichaje = 'empleado' | 'admin';
+
+export interface Usuario {
+  id?: number; //Es opcional porque al crearlo aun no tiene ID
+  nombre_usuario: string;
   email: string;
-  role: "admin" | "employee" | "customer";
+  password_hash: string;
+  rol: RolUsuario;
+  active?: boolean;
+  created_at?: Date;
 }
+
+export interface Producto {
+  id?: number;
+  id_coleccion?: number | null; //Puede ser null por la regla ON DELETE SET NULL en la BD
+  nombre: string;
+  descripcion?: string;
+  precio_base: number | string;
+  imagen_url: string;
+  active?: boolean;
+  created_at?: Date;
+  updated_at?: Date | null;
+}
+
+export interface Variante {
+  id?: number;
+  id_producto: number; //Obligatorio para asociarlo al producto
+  material?: string;
+  precio_extra?: number | string;
+  stock?: number;
+}
+
+export interface Coleccion {
+  id?: number;
+  nombre: string;
+  descripcion?: string;
+  launch_date?: Date;
+  imagen_url?: string;
+}
+
+export interface Detalle {
+  id?: number;
+  id_variante: number;
+  foto?: boolean; //Default false
+  grabado?: boolean; //Default false
+  precio_extra?: number | string;
+}
+
+export interface Wishlist {
+  id?: number;
+  id_usuario: number;
+  id_producto: number;
+  created_at?: Date;
+
+}
+
+export interface Carrito {
+  id?: number;
+  id_usuario: number;
+  created_at?: Date;
+  estado?: 'pendiente' | 'pagado' | 'entregado' | 'cancelado';
+}
+
+export interface Carrito_Variante {
+  id?: number;
+  id_carrito: number;
+  id_variante: number;
+  cantidad?: number; //Default 1
+  precio_final?: number | string;
+}
+
+export interface Fichaje {
+  id?: number;
+  id_usuario: number;
+  tipo: TipoFichaje; //Restringido a 'empleado' o 'admin'
+  nota?: string;
+  fecha?: Date;
+}
+
