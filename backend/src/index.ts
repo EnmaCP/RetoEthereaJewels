@@ -500,6 +500,12 @@ app.post("/api/auth/login", async (req: Request, res: Response) => {
   });
 });
 
+app.post("/api/auth/logout", (req: Request, res: Response) => {
+  res.clearCookie("token");
+  res.json({ message: "Logout exitoso" });
+});
+
+
 
 
 
