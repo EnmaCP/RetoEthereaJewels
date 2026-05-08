@@ -1,9 +1,14 @@
 {
   "dependencies": {
     "dotenv": "^17.4.2",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.15.0"
   },
   "devDependencies": {
-    "@types/pg": "^8.20.0"
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3"
   }
 }

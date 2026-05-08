@@ -35,7 +35,7 @@ export default function IntranetLayout() {
                 <NavLink to="/">
                     Tienda Etherea
                 </NavLink>
-                <NavLink to="/">
+                <NavLink to="/intranet/comite-empresa">
                     Comite de Empresa
                 </NavLink>
                 <NavLink to="/">
