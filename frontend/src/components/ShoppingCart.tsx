@@ -55,6 +55,7 @@ function ShoppingCart() {
               <div className="cart-item-details">
                 <div className="cart-item-header">
                   <h2 className="cart-item-title">{item.product.name}</h2>
+                  <p className='cart-item-description'>{item.product.description}</p>
                   <span className="cart-item-price">{item.product.price}€</span>
                 </div>
 

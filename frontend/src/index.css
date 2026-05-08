@@ -448,3 +448,72 @@ body {
 .hero-section { display: flex; align-items: center; justify-content: center; text-align: center; color: #333; margin-bottom: 40px; position: relative; }
 .hero-content h1 { font-size: 3rem; margin-bottom: 10px; font-family: Georgia, 'Times New Roman', Times, serif; }
 .hero-content p { font-size: 1.2rem; }
+
+/* User Dropdown */
+.user-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.user-menu-container .icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #f7ebeb;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 180px;
+  text-align: left;
+}
+
+.user-dropdown-welcome {
+  margin: 0 0 15px 0;
+  color:#4a3832;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.user-dropdown-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  cursor: pointer;
+  background: #c9af8c;
+  border: 1px solid #f3e2e2;
+  border-radius: 4px;
+  text-align: center;
+  transition: background-color 0.2s;
+  color: white;
+}
+
+.user-dropdown-btn:hover {
+  background: #ba8e52;
+}
+
+.user-dropdown-logout {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  border-radius: 4px;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.user-dropdown-logout:hover {
+  background: #fff1f0;
+}

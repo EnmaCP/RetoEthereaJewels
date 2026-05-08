@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { type CartItem } from "../types";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logoPrincipal from "./imagen/LogoPrincipal.png";
@@ -11,6 +12,7 @@ export function Header() {
     const location = useLocation();
     const navigate = useNavigate();
     const { customer, setCustomer } = useUser();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
     if (location.pathname.startsWith('/intranet')) {
         return null;
@@ -28,9 +30,19 @@ export function Header() {
             });
             setCustomer(null);
             sessionStorage.removeItem("user");
+            setIsDropdownOpen(false);
             navigate("/login");
         } catch (error) {
             console.error("Error logging out", error);
+        }
+    };
+
+    const handleUserIconClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (customer) {
+            setIsDropdownOpen(!isDropdownOpen);
+        } else {
+            navigate("/login");
         }
     };
 
@@ -47,10 +59,29 @@ export function Header() {
                 </div>
                 <div className="header-icons">
                     <button className="icon-btn"><Link to={customer ? "/cart" : "/login"}><img src={shoppingCart} alt="Carrito" className="cart-icon" /></Link></button>
-                    <button className="icon-btn"><Link to={customer ? "/perfil" : "/login"}><img src={userIcon} alt="Usuario" className="user-icon" /></Link></button>
-                    {customer && (
-                        <button className="logout-btn" onClick={handleLogout} style={{ marginLeft: "10px", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", color: "#333" }}>Cerrar sesión</button>
-                    )}
+                    
+                    <div className="user-menu-container">
+                        <button className="icon-btn" onClick={handleUserIconClick}>
+                            <img src={userIcon} alt="Usuario" className="user-icon" />
+                        </button>
+                        {isDropdownOpen && customer && (
+                            <div className="user-dropdown">
+                                <p className="user-dropdown-welcome">Welcome, {customer.username}</p>
+                                <button 
+                                    className="user-dropdown-btn"
+                                    onClick={() => { setIsDropdownOpen(false); navigate("/mis-pedidos"); }} 
+                                >
+                                    Acceder a los pedidos
+                                </button>
+                                <button 
+                                    className="user-dropdown-logout"
+                                    onClick={() => { setIsDropdownOpen(false); handleLogout(); }} 
+                                >
+                                    Cerrar sesión
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,7 +92,7 @@ export function Header() {
                 <li><a href="/catalogue">Catalogue</a></li>
                 <li><a href="#personalizacion">Personalization</a></li>
                 <li><Link to="/intranet">Private Zone</Link></li>
-                <li className="favorites"><a href="#favoritos"><img src={favoritosIcon} alt="Favoritos" className="favorites-icon"/></a></li>
+                <li className="favorites"><a href="/wishlist"><img src={favoritosIcon} alt="Favoritos" className="favorites-icon"/></a></li>
             </ul>  
         </nav>
         </header>

@@ -61,7 +61,7 @@
 }
 
 .cart-item-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin: 0;
   text-transform: uppercase;
   font-weight: normal;
@@ -73,9 +73,10 @@
 
 .cart-item-description {
   font-size: 0.9rem;
-  color: #333;
+  color: #464646;
   line-height: 1.5;
   flex-grow: 1;
+  
 }
 
 .cart-item-actions {
@@ -90,6 +91,7 @@
   background-color: #dcb991;
   padding: 5px 15px;
   gap: 15px;
+  border-radius: 5px;
 }
 
 .quantity-control button {
@@ -133,6 +135,7 @@
 .summary-item-name {
   flex-grow: 1;
 }
+
 
 .summary-item-qty {
   margin: 0 15px;

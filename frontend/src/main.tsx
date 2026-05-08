@@ -19,6 +19,12 @@ import { OrderHistory } from './components/OrderHistory';
 import EditProductPage from './components/EditProductPage';
 import ShoppingCart from './components/ShoppingCart';
 import Catalogue from './components/Catalogue';
+import { Wishlist } from './components/Wishlist'
+import { Committee } from './components/ComiteEmpresa'
+
+
+
+
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -32,26 +38,27 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/cart" element={<ShoppingCart />} />
         <Route path="/catalogue" element={<Catalogue />} />
+        <Route path="/wishlist" element={<Wishlist />} />
 
-        <Route 
-          path="/checkout" 
+        <Route
+          path="/checkout"
           element={
             <PrivateRoute>
               <CheckoutPage />
             </PrivateRoute>
-          } 
+          }
         />
-<Route 
-  path="/mis-pedidos" 
-  element={
-    <PrivateRoute>
-      <OrderHistory />
-    </PrivateRoute>
-  } 
-/>
+        <Route
+          path="/mis-pedidos"
+          element={
+            <PrivateRoute>
+              <OrderHistory />
+            </PrivateRoute>
+          }
+        />
 
-        <Route 
-          path="/intranet" 
+        <Route
+          path="/intranet"
           element={
             <PrivateRoute roles={["employee", "admin"]}>
               <IntranetLayout />
@@ -60,33 +67,34 @@ createRoot(document.getElementById('root')!).render(
         >
           <Route index element={<IntranetHome />} />
           <Route path="fichajes" element={<ClockInPage />} />
+          <Route path="comite-empresa" element={<Committee />} />
         </Route>
 
-        <Route 
-          path="/admin/orders" 
+        <Route
+          path="/admin/orders"
           element={
             <PrivateRoute roles={["admin", "employee"]}>
               <OrdersPanel />
             </PrivateRoute>
-          } 
+          }
         />
 
-        <Route 
-          path="/admin/users" 
+        <Route
+          path="/admin/users"
           element={
             <PrivateRoute roles={["admin"]}>
               <AdminUsers />
             </PrivateRoute>
-          } 
+          }
         />
-      <Route 
-        path="/admin/products/:id/edit" 
-        element={
-          <PrivateRoute roles={["admin"]}>
-            <EditProductPage />
-          </PrivateRoute>
-        } 
-      />
+        <Route
+          path="/admin/products/:id/edit"
+          element={
+            <PrivateRoute roles={["admin"]}>
+              <EditProductPage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </UserProvider>
   </BrowserRouter>
