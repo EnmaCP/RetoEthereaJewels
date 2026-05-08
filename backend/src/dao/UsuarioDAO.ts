@@ -18,13 +18,13 @@ export class UsuarioDAO {
     }
 
     //Crear nuevo usuario
-    static async crear(usuario: Usuario): Promise<Usuario> {
+    static async crearUsuario(nombre_usuario: string, email: string, password_hash: string): Promise<Usuario> {
         const query = `
             INSERT INTO usuario (nombre_usuario, email, password_hash)
             VALUES ($1, $2, $3)
             RETURNING id, nombre_usuario, email, rol
             `;
-            const valores = [usuario.nombre_usuario, usuario.email, usuario.password_hash || ''];
+            const valores = [nombre_usuario, email, password_hash];
             const resultado = await pool.query(query, valores);
             return resultado.rows[0];
     }

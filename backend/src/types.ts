@@ -36,7 +36,7 @@ export interface Coleccion {
   nombre: string;
   descripcion?: string;
   launch_date?: Date;
-  imagen_url?: string;
+  image_url?: string;
 }
 
 export interface Detalle {
@@ -62,7 +62,7 @@ export interface Carrito {
   estado?: 'pendiente' | 'pagado' | 'entregado' | 'cancelado';
 }
 
-export interface Carrito_Variante {
+export interface CarritoVariante {
   id?: number;
   id_carrito: number;
   id_variante: number;
@@ -76,5 +76,15 @@ export interface Fichaje {
   tipo: TipoFichaje; //Restringido a 'empleado' o 'admin'
   nota?: string;
   fecha?: Date;
+}
+
+export interface Review{
+  id?: number;
+    id_producto: number;
+    id_usuario: number;
+    valoracion: number; 
+    titulo?: string;
+    comentario?: string;
+    created_at?: Date;
 }
 

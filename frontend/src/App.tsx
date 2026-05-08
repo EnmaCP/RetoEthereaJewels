@@ -123,39 +123,6 @@ function App() {
       return [...prev, { product, quantity: 1 }];
     });
   };
-  const handleEditarClick = async (producto) => {
-    if (customer?.role === "admin") {
-        navigate(`/admin/products/${producto.id}/edit`);
-    } else if (customer?.role === "employee") {
-        const nuevoStockStr = window.prompt(`Introduce el nuevo stock para "${producto.name}":`, producto.stock.toString());
-        
-        if (nuevoStockStr === null) return;
-        
-        const nuevoStock = Number(nuevoStockStr);
-        if (isNaN(nuevoStock) || nuevoStock < 0) {
-            return alert("El stock debe ser un número válido y mayor o igual a 0.");
-        }
-
-        try {
-            const res = await fetch(`http://localhost:3000/api/products/${producto.id}/stock`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ stock: nuevoStock })
-            });
-
-            if (res.ok) {
-                setProducts(prev => 
-                    prev.map(p => p.id === producto.id ? { ...p, stock: nuevoStock } : p)
-                );
-            } else {
-                alert("Error al actualizar el stock");
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-};
 
   useEffect(() =>{
     sessionStorage.setItem("cart", JSON.stringify(cart));
@@ -221,7 +188,7 @@ function App() {
                 <div className="form-group btn-group">
                   <button type="submit">Añadir</button>
                 </div>
-                <button onClick={() => handleEditarClick(products)}>Editar</button>
+
               </form>
             </div>
           )}

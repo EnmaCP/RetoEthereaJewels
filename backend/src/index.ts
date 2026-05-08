@@ -1,12 +1,18 @@
 import express from "express";
 import type { NextFunction, Request, Response } from "express";
-import type { Product } from "./types.ts";
+import type { Producto } from "./types.ts";
 import cors from "cors";
 import { pool } from "./db.ts";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
 import cookieParser from "cookie-parser";
+import { UsuarioDAO } from "./dao/UsuarioDAO.ts";
+import { VarianteDAO } from "./dao/VarianteDAO.ts";
+import { ReviewDAO } from "./dao/ReviewDAO.ts";
+import  { ColeccionDAO } from "./dao/ColeccionDAO.ts";
+import {ProductoDAO} from "./dao/ProductoDAO.ts"; 
+
 
 const app = express();
 const PORT = 3000;
@@ -19,6 +25,79 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+
+//Obtener todas las colecciones
+app.get('/api/colecciones', async (req: Request, res: Response) => {
+    try {
+      const colecciones = await ColeccionDAO.obtenerTodas();
+      res.json(colecciones);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error al obtener las colecciones" });
+    }
+
+});
+
+//Crear un usuario
+app.post("/api/usuarios", async (req: Request, res: Response) => {
+try{
+    const { nombre_usuario, email, password } = req.body;
+    const nuevoUsuario = await UsuarioDAO.crearUsuario(nombre_usuario, email, password);
+    res.status(201).json(nuevoUsuario);
+}catch(error){
+    res.status(500).json({ error: "Error al crear el usuario" });
+}
+});
+
+// Ruta para obtener todos los usuarios
+app.get('/api/usuarios', async (req: Request, res: Response) => {
+    try {
+        const usuarios = await UsuarioDAO.obtenerTodos();
+        res.json(usuarios);
+    } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+//Ver las variantes de un producto en concreto
+app.get("/api/productos/variantes/:idProducto", async (req: Request<{idProducto: string}>, res: Response) => {
+    try {
+        const idProducto = parseInt(req.params.idProducto);
+        const variantes = await VarianteDAO.obtenerPorProducto(idProducto);
+        res.json(variantes);
+    } catch (error) {
+        console.error('Error al obtener variantes:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+//Ver las reviews de un producto en concreto
+app.get("/api/reviews/:idProducto", async (req: Request<{idProducto: string}>, res: Response) => {
+    try {
+        const idProducto = parseInt(req.params.idProducto);
+        const reviews = await ReviewDAO.obtenerPorProducto(idProducto);
+        res.json(reviews);
+    } catch (error) {
+        console.error('Error al obtener reviews:', error);
+        res.status(500).json({ error: 'Error al obtener las reseñas' });
+    }
+});
+
+//Crear una review para un producto
+app.post("/api/reviews", async (req: Request, res: Response) => {
+    try {
+        //donde el frontend nos manda los datos de la review
+        const nuevaReview = req.body;
+        //se la pasamos al DAO para que la guarde en la base de datos
+        const reviewCreada = await ReviewDAO.crear(nuevaReview);
+        //Respondemos con estado de creado con exito
+        res.status(201).json(reviewCreada);
+    } catch (error) {
+      console.error('Error al crear la review:', error);
+      res.status(500).json({ error: 'Error al crear la reseña' });
+    }
+});
 
 interface AuthRequest extends Request{
   customer?: {id:number, username: string, role: string};
@@ -126,6 +205,8 @@ app.post("/api/products", verifyToken, requireRole("admin"), async (req: Request
 
     res.status(201).json({ message: "Producto creado correctamente", product: result.rows[0] });
 });
+
+
 /*
 app.put("/api/products/:id",verifyToken,requireRole("admin", "employee"), async (req: Request<{ id: string }, {}, { stock: number }>, res: Response) => {
     try {
