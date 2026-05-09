@@ -11,7 +11,9 @@ import { UsuarioDAO } from "./dao/UsuarioDAO.ts";
 import { VarianteDAO } from "./dao/VarianteDAO.ts";
 import { ReviewDAO } from "./dao/ReviewDAO.ts";
 import  { ColeccionDAO } from "./dao/ColeccionDAO.ts";
-import {ProductoDAO} from "./dao/ProductoDAO.ts"; 
+import {ProductoDAO} from "./dao/ProductoDAO.ts";
+import { CarritoVarianteDAO } from "./dao/CarritoVarianteDAO.ts";
+import { parse } from "node:path";
 
 
 const app = express();
@@ -97,6 +99,45 @@ app.post("/api/reviews", async (req: Request, res: Response) => {
     } catch (error) {
       console.error('Error al crear la review:', error);
       res.status(500).json({ error: 'Error al crear la reseña' });
+    }
+});
+
+//Obtener todos los productos (para el catálogo)
+app.get("/api/productos", async (req: Request, res: Response) => {
+    try {
+        const productos = await ProductoDAO.obtenerTodos();
+        res.json(productos);
+    } catch (error) {
+        console.error('Error al obtener productos:', error);
+        res.status(500).json({ error: 'Error al obtener los productos' });
+    }
+});
+
+//Obtener un producto específico con sus variantes 
+app.get("/api/productos/:id", async (req: Request<{id: string}>, res: Response) => {
+  try{
+  const id = parseInt(req.params.id);
+  const producto = await ProductoDAO.obtenerPorId(id);
+  if(producto){
+    res.json(producto);
+  } else {
+    res.status(404).json({ error: 'Producto no encontrado' });
+  }}
+    catch (error) {
+        console.error('Error al obtener el producto:', error);
+        res.status(500).json({ error: 'Error al obtener el producto' });
+    }
+});
+
+//Ver el carrito de un usuario
+app.get("/api/carrito/:idUsuario", async (req: Request<{idUsuario: string}>, res: Response) => {
+    try {
+        const idUsuario = parseInt(req.params.idUsuario);
+        const itemsCarrito = await CarritoVarianteDAO.obtenerPorUsuario(idUsuario);
+        res.json(itemsCarrito);
+    } catch (error) {
+        console.error('Error al obtener el carrito:', error);
+        res.status(500).json({ error: 'Error al obtener el carrito' });
     }
 });
 
@@ -208,46 +249,7 @@ app.post("/api/products", verifyToken, requireRole("admin"), async (req: Request
 });
 
 
-/*
-app.put("/api/products/:id",verifyToken,requireRole("admin", "employee"), async (req: Request<{ id: string }, {}, { stock: number }>, res: Response) => {
-    try {
-        const id = parseInt(req.params.id);
-        const { stock } = req.body;
 
-        if (stock === undefined || stock < 0) {
-            return res.status(400).json({ error: "Stock es obligatorio y debe ser mayor o igual a 0" });
-        }
-
-        const result = await pool.query(
-            'UPDATE products SET stock = $1 WHERE id = $2 RETURNING id, name, description, price, category, stock, image_url AS "imageUrl"',
-            [stock, id]
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: "Producto no encontrado" });
-        }
-
-        res.json({ message: "Producto actualizado correctamente", product: result.rows[0] });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error al actualizar el producto" });
-    }
-});*/
-/*
-app.delete("/api/products/:id", async (req: Request<{id: string}>, res: Response) => {
-    try {
-        const result = await pool.query('DELETE FROM products WHERE id = $1 LIMIT 1', [parseInt(req.params.id)]);
-
-        if(result.rows.length === 0){
-            return res.status(404).json({error: "Producto no encontrado"});
-        }
-        
-        res.json({message: "Producto eliminado", product: result.rows[0]});
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error al eliminar el producto" });
-    }
-});*/
 app.put("/api/products/:id", verifyToken, requireRole("admin"), async (req: Request<{ id: string }>, res: Response) => {
   const { name, description, price, stock, image_url, active } = req.body;
   const productId = parseInt(req.params.id);

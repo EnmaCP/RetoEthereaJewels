@@ -26,4 +26,15 @@ export class CarritoVarianteDAO {
         const query = 'DELETE FROM carrito_variante WHERE id = $1';
         await pool.query(query, [id]);
     }
+
+    // Obtener items del carrito de un usuario
+    static async obtenerPorUsuario(idUsuario: number): Promise<CarritoVariante[]> {
+        const query = `
+            SELECT cv.* FROM carrito_variante cv
+            INNER JOIN carrito c ON cv.id_carrito = c.id
+            WHERE c.id_usuario = $1
+        `;
+        const resultado = await pool.query(query, [idUsuario]);
+        return resultado.rows;
+    }
 }
