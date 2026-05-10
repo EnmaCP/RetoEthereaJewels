@@ -137,7 +137,7 @@ export function ProductDetail() {
                         <button className="btn-personalize">PERSONALIZAR</button>
                         <div className="price-cart-col">
                             <span className="product-price-large">{product.price}€</span>
-                            <button className="btn-add-cart" onClick={() => addToCartFromDetail(product)} disabled={product.stock === 0}>Añadir a la cesta</button>
+                            <button className="btn-add-cart" onClick={() => addToCartFromDetail(product)} disabled={product.stock === 0}>Add to Cart</button>
                         </div>
                     </div>
                 </div>
@@ -153,28 +153,28 @@ export function ProductDetail() {
                     <ul className="reviews-list">
                         {reviews.map(r => (
                             <li key={r.id}>
-                                <strong>{r.username || "Usuario"}</strong> - <span style={{ color: "gold" }}>{"★".repeat(r.rating)}</span>{"☆".repeat(5 - r.rating)}
+                                <strong>{r.username || "User"}</strong> - <span style={{ color: "gold" }}>{"★".repeat(r.rating)}</span>{"☆".repeat(5 - r.rating)}
                                 <p>{r.comment}</p>
                             </li>
                         ))}
                     </ul>
                 ) : (
-                    <p>No hay reseñas todavía.</p>
+                    <p>No reviews yet.</p>
                 )}
 
                 <form onSubmit={submitReview} className="review-form">
-                    <h4>Deja tu reseña</h4>
+                    <h4>Leave your review</h4>
                     <label>
                         Valoración:
                         <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-                            {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n} estrella{n > 1 ? 's' : ''}</option>)}
+                            {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n} estrela{n > 1 ? 's' : ''}</option>)}
                         </select>
                     </label>
                     <label>
-                        Comentario:
+                        Comment:
                         <textarea value={comment} onChange={(e) => setComment(e.target.value)} required />
                     </label>
-                    <button type="submit">Enviar reseña</button>
+                    <button type="submit">Send review</button>
                 </form>
             </div>
         </div>

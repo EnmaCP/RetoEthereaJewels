@@ -49,7 +49,7 @@ export function WishlistCard({ product, onRemove }: { product: Product, onRemove
                         fontSize: "1.5rem", 
                         cursor: "pointer" 
                     }}
-                    title={isFavorite ? "Quitar de la lista" : "Añadir a la lista de deseos"}
+                    title={isFavorite ? "Remove from list" : "Add to wishlist"}
                 >
                     {isFavorite ? "❤️" : "🤍"}
                 </button>
@@ -110,9 +110,9 @@ export function Wishlist() {
 
     return (
         <div className="wishlist-page" style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-            <h2 style={{ textAlign: "center", marginBottom: "30px", fontSize: "2rem" }}>Mi Lista de Deseos</h2>
+            <h2 style={{ textAlign: "center", marginBottom: "30px", fontSize: "2rem" }}>My Wishlist</h2>
             {wishlist.length === 0 ? (
-                <p style={{ textAlign: "center" }}>Tu lista de deseos está vacía.</p>
+                <p style={{ textAlign: "center" }}>Your wishlist is empty.</p>
             ) : (
                 <div className="products-grid">
                     {wishlist.map(product => (

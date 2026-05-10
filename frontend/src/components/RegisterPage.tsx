@@ -26,13 +26,13 @@ export default function RegisterPage() {
         setIsLoading(true);
         try {
             await authAPI.register(nombre, email, password);
-            setSuccess('¡Usuario creado correctamente! Redirigiendo al login...');
+            setSuccess('User created correctly! Redirecting to login...');
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
         } catch (err: any) {
             console.error(err);
-            setError(err.message || 'Error de conexión con el servidor');
+            setError(err.message || 'Error connecting to server');
         } finally {
             setIsLoading(false);
         }
@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
     return (
         <div className="register-container">
-            <h2 className="register-title">Crear Cuenta</h2>
+            <h2 className="register-title">Create Account</h2>
             
             {error && (
                 <div className="register-error">
@@ -56,7 +56,7 @@ export default function RegisterPage() {
 
             <form onSubmit={handleRegister} className="register-form">
                 <div>
-                    <label htmlFor="nombre" className="register-label">Nombre</label>
+                    <label htmlFor="nombre" className="register-label">Name</label>
                     <input 
                         type="text" 
                         id="nombre" 
@@ -80,7 +80,7 @@ export default function RegisterPage() {
                     />
                 </div>
                 <div>
-                    <label htmlFor="password" className="register-label">Contraseña</label>
+                    <label htmlFor="password" className="register-label">Password</label>
                     <input 
                         type="password" 
                         id="password" 
@@ -92,7 +92,7 @@ export default function RegisterPage() {
                     />
                 </div>
                 <div>
-                    <label htmlFor="confirmPassword" className="register-label">Confirmar Contraseña</label>
+                    <label htmlFor="confirmPassword" className="register-label">Confirm Password</label>
                     <input 
                         type="password" 
                         id="confirmPassword" 
@@ -104,12 +104,12 @@ export default function RegisterPage() {
                     />
                 </div>
                 <button type="submit" className="register-button" disabled={isLoading}>
-                    {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
+                    {isLoading ? 'Creating account...' : 'Create account'}
                 </button>
             </form>
 
             <div className="register-footer">
-                ¿Ya tienes cuenta? <Link to="/login" className="register-link">Inicia sesión aquí</Link>
+                Already have an account? <Link to="/login" className="register-link">Login here</Link>
             </div>
         </div>
     );

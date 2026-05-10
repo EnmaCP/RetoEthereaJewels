@@ -17,12 +17,12 @@ export function CheckoutPage() {
 
    const handleCheckout = () => {
         if (cart.length === 0) {
-            alert("No hay productos en el carrito");
+            alert("There are no products in the cart");
             return;
         }
 
         if (!address.trim()) {
-            alert("Por favor, introduce una dirección de envío");
+            alert("Please, write your address");
             return;
         }
         
@@ -48,13 +48,13 @@ export function CheckoutPage() {
                 if (res.status === 409) {
                     throw new Error(data.error); 
                 }
-                throw new Error("Error al procesar el pedido");
+                throw new Error("Error processing order");
             }
             return data;
         })
         .then((data) => {
-            console.log("Pedido completado", data);
-            alert(`Pedido completado correctamente. Número de pedido: ${data.order?.id || 'Desconocido'}`);
+            console.log("Order completed", data);
+            alert(`Order completed successfully. Order number: ${data.order?.id || 'Unknown'}`);
             setCart([]);
             setAddress("");
             sessionStorage.removeItem("cart");
@@ -72,11 +72,11 @@ export function CheckoutPage() {
 
             <div className="checkout-container">
                 <div className="cart-section">
-                    <h2 className="checkout-section-title">Tu Carrito</h2>
+                    <h2 className="checkout-section-title">Your cart</h2>
                     {cart.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-                            <p style={{ marginBottom: '1.5rem', color: '#666', fontSize: '1.2rem' }}>El carrito está vacío</p>
-                            <button className="btn-back" onClick={() => navigate("/")}>&larr; Volver a la tienda</button>
+                            <p style={{ marginBottom: '1.5rem', color: '#666', fontSize: '1.2rem' }}>Cart is empty</p>
+                            <button className="btn-back" onClick={() => navigate("/")}>&larr; Back to shop</button>
                         </div>
                     ) : (
                         <>
@@ -92,7 +92,7 @@ export function CheckoutPage() {
                 </div>
                 
                 <div className="address-section">
-                    <h2 className="checkout-section-title">Dirección de Envío</h2>
+                    <h2 className="checkout-section-title">Shipping Address</h2>
                     <input 
                         type="text" 
                         className="address-input"
@@ -103,13 +103,13 @@ export function CheckoutPage() {
                 </div>
                 
                 <div className="checkout-actions">
-                    <button className="btn-back" onClick={() => navigate("/")}>&larr; Seguir Comprando</button>
+                    <button className="btn-back" onClick={() => navigate("/")}>&larr; Continue shopping</button>
                     <button 
                         className="btn-complete-order"
                         onClick={handleCheckout} 
                         disabled={!address.trim() || cart.length === 0}
                     >
-                        Confirmar y Pagar
+                        Confirm and pay
                     </button>
                 </div>
             </div>

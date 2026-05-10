@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import './EditProductPage.css';
 
 export default function EditProductPage() {
     const { id } = useParams();
@@ -56,26 +57,38 @@ export default function EditProductPage() {
     if (loading) return <p>Cargando producto...</p>;
 
     return (
-        <div className="admin-container">
-            <h2>Editar Producto</h2>
-            <form onSubmit={handleSubmit}>
-                <label>Nombre:</label>
-                <input name="name" value={form.name} onChange={handleChange} required />
+        <div className="edit-product-container">
+            <div className="edit-product-card">
+                <h2>Editar Producto</h2>
+                <form className="edit-product-form" onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label>Nombre:</label>
+                        <input name="name" value={form.name} onChange={handleChange} required />
+                    </div>
 
-                <label>Precio:</label>
-                <input type="number" name="price" value={form.price} onChange={handleChange} required />
+                    <div className="form-group">
+                        <label>Precio:</label>
+                        <input type="number" name="price" value={form.price} onChange={handleChange} required />
+                    </div>
 
-                <label>Stock:</label>
-                <input type="number" name="stock" value={form.stock} onChange={handleChange} required />
+                    <div className="form-group">
+                        <label>Stock:</label>
+                        <input type="number" name="stock" value={form.stock} onChange={handleChange} required />
+                    </div>
 
-                <label>URL Imagen:</label>
-                <input name="image_url" value={form.image_url} onChange={handleChange} />
+                    <div className="form-group">
+                        <label>URL Imagen:</label>
+                        <input name="image_url" value={form.image_url} onChange={handleChange} />
+                    </div>
 
-                <label>Activo:</label>
-                <input type="checkbox" name="active" checked={form.active} onChange={handleChange} />
+                    <div className="form-group checkbox-group">
+                        <label>Activo:</label>
+                        <input type="checkbox" name="active" checked={form.active} onChange={handleChange} />
+                    </div>
 
-                <button type="submit">Guardar Cambios</button>
-            </form>
+                    <button type="submit" className="submit-button">Guardar Cambios</button>
+                </form>
+            </div>
         </div>
     );
 }

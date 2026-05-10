@@ -42,7 +42,7 @@ export default function LoginPage() {
 
             <form onSubmit={handleLogin} className="login-form">
                 <div>
-                    <label htmlFor="identifier" className="login-label">Email o nombre de usuario</label>
+                    <label htmlFor="identifier" className="login-label">Email or username</label>
                     <input 
                         type="text" 
                         id="identifier" 
@@ -54,7 +54,7 @@ export default function LoginPage() {
                     />
                 </div>
                 <div>
-                    <label htmlFor="password" className="login-label">Contraseña</label>
+                    <label htmlFor="password" className="login-label">Password</label>
                     <input 
                         type="password" 
                         id="password" 
@@ -66,12 +66,12 @@ export default function LoginPage() {
                     />
                 </div>
                 <button type="submit" className="login-button" disabled={isLoading}>
-                    {isLoading ? 'Cargando...' : 'Entrar'}
+                    {isLoading ? 'Loading...' : 'Log in'}
                 </button>
             </form>
 
             <div className="login-footer">
-                ¿No tienes cuenta? <Link to="/register" className="login-link">Regístrate aquí</Link>
+                Don't have an account? <Link to="/register" className="login-link">Register here</Link>
             </div>
         </div>
     );

@@ -50,13 +50,13 @@ export function OrderHistory() {
 
     fetch(endpoint, { credentials: "include" })
       .then((res) => {
-        if (!res.ok) throw new Error("Error al obtener los pedidos");
+        if (!res.ok) throw new Error("Error when loading the orders.");
         return res.json();
       })
       .then((data) => setOrders(data))
       .catch((err) => {
         console.error(err);
-        setError("Hubo un error al cargar los pedidos.");
+        setError("Error when loading the orders.");
       })
       .finally(() => {
         setLoading(false); 
@@ -68,31 +68,31 @@ export function OrderHistory() {
       const res = await fetch(`http://localhost:3000/api/orders/${id}`, {
         credentials: "include"
       });
-      if (!res.ok) throw new Error("Error al cargar el detalle del pedido");
+      if (!res.ok) throw new Error("Error when loading the order detail.");
       const data = await res.json();
       setSelectedOrder(data);
     } catch (err) {
       console.error(err);
-      alert("Error al cargar el detalle");
+      alert("Error when loading the order detail.");
     }
   };
 
-  if (loading) return <div>Cargando pedidos...</div>;
+  if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <div className="order-history">
-      <h2>Mi Historial de Pedidos</h2>
+      <h2>My Order History</h2>
       {orders.length === 0 ? (
-        <p>No hay pedidos todavía.</p>
+        <p>No orders yet.</p>
       ) : (
         <table className="orders-table">
           <thead>
             <tr>
               <th># (ID)</th>
-              <th>Estado</th>
+              <th>Status</th>
               <th>Total</th>
-              <th>Fecha</th>
+              <th>Date</th>
             </tr>
           </thead>
           <tbody>
@@ -116,7 +116,7 @@ export function OrderHistory() {
 
       {selectedOrder && (
         <div className="order-detail" style={{ marginTop: "20px", padding: "15px", border: "1px solid #ccc" }}>
-          <h3>Detalle del Pedido #{selectedOrder.id}</h3>
+          <h3>Order #{selectedOrder.id} details</h3>
           
           <ul className="order-detail-list" style={{ listStyle: "none", padding: 0 }}>
             {selectedOrder.items.map((item, idx) => (
@@ -129,7 +129,7 @@ export function OrderHistory() {
                 <div className="order-detail-info">
                   <strong>{item.name}</strong>
                   <div className="order-detail-meta" style={{ fontSize: "0.9em", color: "#555" }}>
-                    Cantidad: {item.quantity} | Precio Unidad: ${Number(item.unit_price).toFixed(2)}
+                    Quantity: {item.quantity} | Unit price: ${Number(item.unit_price).toFixed(2)}
                   </div>
                 </div>
                 <div className="order-detail-price" style={{ marginLeft: "auto", fontWeight: "bold" }}>

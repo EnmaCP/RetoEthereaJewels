@@ -17,7 +17,7 @@ function App() {
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newDescription, setNewDescription] = useState("");
-  const [newCategory, setNewCategory] = useState("");
+  const [newCollection, setNewCollection] = useState("");
   const [newStock, setNewStock] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("")
 
@@ -55,12 +55,12 @@ function App() {
         nombre: newName,
         precio_base: parseFloat(newPrice),
         descripcion: newDescription || undefined,
-        id_coleccion: newCategory ? parseInt(newCategory) : undefined,
+        id_coleccion: newCollection ? parseInt(newCollection) : undefined,
         image_url: newImageUrl || undefined
       });
       setNewName("");
       setNewPrice("");
-      setNewCategory("");
+      setNewCollection("");
       setNewStock("");
       setNewDescription("");
       setNewImageUrl("");
@@ -76,7 +76,7 @@ function App() {
     if (input === null) return;
     const newStock = parseInt(input);
     if (isNaN(newStock) || newStock < 0) {
-      alert("El stock debe ser un número mayor o igual a 0");
+      alert("Stock must be greater than 0");
       return;
     }
     try {
@@ -84,12 +84,12 @@ function App() {
       loadProducts();
     } catch (error) {
       console.error("Error:", error);
-      alert("Error al actualizar el stock");
+      alert("Error updating stock");
     }
   };
 
   const handleDelete = async (id: number): Promise<void> => {
-    if (!window.confirm("¿Seguro que quieres borrar este producto?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
     
     setProducts(prevProducts => prevProducts.filter(p => p.id !== id));
 
@@ -97,7 +97,7 @@ function App() {
       await productosAPI.delete(id);
     } catch (error) {
       console.error("Error:", error);
-      alert("Error al borrar el producto");
+      alert("Error deleting product");
       loadProducts();
     }
   };
@@ -127,20 +127,20 @@ function App() {
               <h3>Añadir producto</h3>
               <form onSubmit={handleSubmit} className="topbar-form">
                 <div className="form-group">
-                  <label htmlFor="name">Nombre:</label>
+                  <label htmlFor="name">Name:</label>
                   <input type="text" id="name" name="name" value={newName} onChange={e => setNewName(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="description">Descripción:</label>
+                  <label htmlFor="description">Description:</label>
                   <input type="text" id="description" name="description" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="price">Precio:</label>
+                  <label htmlFor="price">Price:</label>
                   <input type="text" id="price" name="price" value={newPrice} onChange={e => setNewPrice(e.target.value)} />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="category">Categoría:</label>
-                  <input type="text" id="category" name="category" value={newCategory} onChange={e => setNewCategory(e.target.value)} />
+                  <label htmlFor="collection">Collection name:</label>
+                  <input type="text" id="collection" name="collection" value={newCollection} onChange={e => setNewCollection(e.target.value)} />
                 </div>
                 <div className="form-group">
                   <label htmlFor="stock">Stock:</label>
@@ -151,7 +151,7 @@ function App() {
                   <input type="text" id="imageUrl" name="imageUrl" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} />
                 </div>
                 <div className="form-group btn-group">
-                  <button type="submit">Añadir</button>
+                  <button type="submit">Add</button>
                 </div>
               </form>
             </div>
@@ -162,7 +162,7 @@ function App() {
               <div key={product.id} className="product-item-wrapper">
                 <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
 
-                <button title="Añadir al carrito" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
+                <button title="Add to cart" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
                   onClick={() => addToCart(product)}>
                   🛒
                 </button>

@@ -35,7 +35,7 @@ function ShoppingCart() {
       setCartItems(items);
     } catch (err: any) {
       console.error(err);
-      setError('Error al cargar el carrito');
+      setError('Error loading cart');
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +74,7 @@ function ShoppingCart() {
       ));
     } catch (err: any) {
       console.error(err);
-      setError('Error al actualizar cantidad');
+      setError('Error updating item');
     }
   };
 
@@ -90,7 +90,7 @@ function ShoppingCart() {
       setCartItems(prev => prev.filter(item => item.id !== itemId));
     } catch (err: any) {
       console.error(err);
-      setError('Error al eliminar item');
+      setError('Error removing item');
     }
   };
 
@@ -105,7 +105,7 @@ function ShoppingCart() {
   // Determinar qué carrito mostrar
   const currentTotal = customer ? totalBackend : total;
 
-  if (isLoading) return <div>Cargando carrito...</div>;
+  if (isLoading) return <div>Loading cart...</div>;
 
   return (
     <div className="cart-page-container">
@@ -114,7 +114,7 @@ function ShoppingCart() {
 
         {customer ? (
           cartItems.length === 0 ? (
-            <p>El carrito está vacío.</p>
+            <p>Cart is empty.</p>
           ) : (
             cartItems.map((item) => (
               <div key={item.id} className="cart-item-card">
@@ -129,7 +129,7 @@ function ShoppingCart() {
 
                 <div className="cart-item-details">
                   <div className="cart-item-header">
-                    <h2 className="cart-item-title">Producto Variante #{item.id_variante}</h2>
+                    <h2 className="cart-item-title">Product Variant #{item.id_variante}</h2>
                     <span className="cart-item-price">{item.precio_final || 0}€</span>
                   </div>
 
@@ -153,7 +153,7 @@ function ShoppingCart() {
                       className="remove-btn"
                       onClick={() => handleRemoveItemBackend(item.id)}
                     >
-                      🗑️ Eliminar
+                      🗑️ Remove
                     </button>
                   </div>
                 </div>
@@ -162,7 +162,7 @@ function ShoppingCart() {
           )
         ) : (
           cart.length === 0 ? (
-            <p>El carrito está vacío.</p>
+            <p>The cart is empty.</p>
           ) : (
             cart.map((item) => (
               <div key={item.product.id} className="cart-item-card">
@@ -245,7 +245,7 @@ function ShoppingCart() {
             }
           }}
         >
-          {customer ? 'Proceder al Pago' : 'Iniciar Sesión para Pagar'}
+          {customer ? 'Proceed to Payment' : 'Log in to pay'}
         </button>
       </div>
     </div>

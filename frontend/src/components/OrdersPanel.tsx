@@ -47,16 +47,16 @@ export default function OrdersPanel() {
 
   return (
     <div className="orders-panel">
-      <h2>Panel de Gestión de Pedidos</h2>
+      <h2>Order Management Panel</h2>
       <table className="orders-table">
         <thead>
           <tr className="orders-table-header">
             <th>#</th>
-            <th>Cliente (ID)</th> 
-            <th>Estado</th>
+            <th>Customer (ID)</th> 
+            <th>Status</th>
             <th>Total</th>
-            <th>Dirección</th>
-            <th>Fecha</th>
+            <th>Address</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
@@ -70,11 +70,11 @@ export default function OrdersPanel() {
                   onChange={(e) => handleStatusChange(order.id, e.target.value)}
                   className="status-select"
                 >
-                  <option value="pending">Pendiente</option>
-                  <option value="processing">En proceso</option>
-                  <option value="shipped">Enviado</option>
-                  <option value="delivered">Entregado</option>
-                  <option value="cancelled">Cancelado</option>
+                  <option value="pending">Pending</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
                 </select>
               </td>
               <td>${order.total ? Number(order.total).toFixed(2) : "0.00"}</td>
