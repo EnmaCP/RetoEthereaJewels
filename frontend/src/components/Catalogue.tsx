@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
-import type { Product } from '../types'
+import { useEffect, useState, type FormEvent } from 'react'
+import type { Product, CartItem } from '../types'
 import { ProductCard } from './productCard'
 import { useNavigate } from 'react-router-dom';
-import type { CartItem } from '../types';
 import { useUser } from './UserContext';
+import { productosAPI, authAPI } from '../services/apiService';
 
 
 function App() {
@@ -23,61 +23,55 @@ function App() {
 
   const { customer, setCustomer, loading, setLoading } = useUser();
 
-  const loadProducts = () => {
-    fetch('http://localhost:3000/api/products')
-      .then(response => response.json())
-      .then((data: Product[]) => setProducts(data))
-      .catch((error) => console.error("Error loading products:", error));
+  const loadProducts = async () => {
+    try {
+      const data = await productosAPI.getAll();
+      const mappedProducts: Product[] = data.map((p: any) => ({
+        id: p.id,
+        name: p.nombre,
+        description: p.descripcion || "",
+        price: Number(p.precio_base),
+        category: p.nombre_coleccion || "General",
+        stock: 10, // Default stock as it moved to variante table
+        imageUrl: p.image_url || p.imagen_url || `https://placehold.co/200x200?text=${encodeURIComponent(p.nombre)}`,
+        active: p.active !== false,
+      }));
+      setProducts(mappedProducts);
+    } catch (error) {
+      console.error("Error loading products:", error);
+    }
   };
 
-  useEffect(() => {
-    setLoading(true);
-    fetch("http://localhost:3000/api/auth/me", { credentials: "include" })
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error("No hay sesión activa");
-      })
-      .then((data) => setCustomer(data.customer))
-      .catch(() => setCustomer(null))
-      .finally(() => setLoading(false));
-  }, [setCustomer, setLoading]);
+
 
   useEffect(() => {
     loadProducts();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    fetch("http://localhost:3000/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", 
-      body: JSON.stringify({
-        name: newName,
-        price: parseFloat(newPrice),
-        description: newDescription || undefined,
-        category: newCategory || undefined,
-        stock: newStock ? parseInt(newStock) : undefined,
-        imageUrl: newImageUrl || undefined
-      })
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error " + res.status);
-        return res.json();
-      })
-      .then(() => {
-        setNewName("");
-        setNewPrice("");
-        setNewCategory("");
-        setNewStock("");
-        setNewDescription("");
-        setNewImageUrl("");
-        loadProducts();
-      })
-      .catch((error) => console.error("Error:", error));
+    try {
+      await productosAPI.create({
+        nombre: newName,
+        precio_base: parseFloat(newPrice),
+        descripcion: newDescription || undefined,
+        id_coleccion: newCategory ? parseInt(newCategory) : undefined,
+        image_url: newImageUrl || undefined
+      });
+      setNewName("");
+      setNewPrice("");
+      setNewCategory("");
+      setNewStock("");
+      setNewDescription("");
+      setNewImageUrl("");
+      loadProducts();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al crear el producto");
+    }
   };
 
-  const handleUpdateStock = (id: number, currentStock: number): void => {
+  const handleUpdateStock = async (id: number, currentStock: number): Promise<void> => {
     const input = window.prompt(`Stock actual: ${currentStock}. Nuevo stock:`);
     if (input === null) return;
     const newStock = parseInt(input);
@@ -85,31 +79,27 @@ function App() {
       alert("El stock debe ser un número mayor o igual a 0");
       return;
     }
-    fetch(`http://localhost:3000/api/products/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ stock: newStock }),
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error del servidor: " + res.status);
-        return res.json();
-      })
-      .then(() => loadProducts())
-      .catch((error) => console.error("Error:", error));
+    try {
+      await productosAPI.update(id, { stock: newStock });
+      loadProducts();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al actualizar el stock");
+    }
   };
 
-  const handleDelete = (id: number): void => {
+  const handleDelete = async (id: number): Promise<void> => {
     if (!window.confirm("¿Seguro que quieres borrar este producto?")) return;
     
     setProducts(prevProducts => prevProducts.filter(p => p.id !== id));
 
-    fetch(`http://localhost:3000/api/products/${id}`, { method: "DELETE", credentials: "include" })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error del servidor: " + res.status);
-        return res.json();
-      })
-      .catch((error) => console.error("Error:", error));
+    try {
+      await productosAPI.delete(id);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al borrar el producto");
+      loadProducts();
+    }
   };
 
   const addToCart = (product: Product): void => {
@@ -122,39 +112,6 @@ function App() {
       return [...prev, { product, quantity: 1 }];
     });
   };
-  const handleEditarClick = async (producto) => {
-    if (customer?.role === "admin") {
-        navigate(`/admin/products/${producto.id}/edit`);
-    } else if (customer?.role === "employee") {
-        const nuevoStockStr = window.prompt(`Introduce el nuevo stock para "${producto.name}":`, producto.stock.toString());
-        
-        if (nuevoStockStr === null) return;
-        
-        const nuevoStock = Number(nuevoStockStr);
-        if (isNaN(nuevoStock) || nuevoStock < 0) {
-            return alert("El stock debe ser un número válido y mayor o igual a 0.");
-        }
-
-        try {
-            const res = await fetch(`http://localhost:3000/api/products/${producto.id}/stock`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ stock: nuevoStock })
-            });
-
-            if (res.ok) {
-                setProducts(prev => 
-                    prev.map(p => p.id === producto.id ? { ...p, stock: nuevoStock } : p)
-                );
-            } else {
-                alert("Error al actualizar el stock");
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-};
 
   useEffect(() =>{
     sessionStorage.setItem("cart", JSON.stringify(cart));
@@ -196,7 +153,6 @@ function App() {
                 <div className="form-group btn-group">
                   <button type="submit">Añadir</button>
                 </div>
-                <button onClick={() => handleEditarClick(products)}>Editar</button>
               </form>
             </div>
           )}

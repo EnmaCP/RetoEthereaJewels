@@ -37,4 +37,11 @@ export class CarritoVarianteDAO {
         const resultado = await pool.query(query, [idUsuario]);
         return resultado.rows;
     }
+
+    // Actualizar cantidad de un item
+    static async actualizarCantidad(id: number, cantidad: number): Promise<CarritoVariante> {
+        const query = 'UPDATE carrito_variante SET cantidad = $1 WHERE id = $2 RETURNING *';
+        const resultado = await pool.query(query, [cantidad, id]);
+        return resultado.rows[0];
+    }
 }

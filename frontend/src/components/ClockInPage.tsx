@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import './IntranetLayout.css';
+import { useUser } from './UserContext';
+import { fichagesAPI } from '../services/apiService';
 
 export default function ClockInPage() {
-    const raw = sessionStorage.getItem("user");
-    const user = raw ? JSON.parse(raw) : null;
+    const { customer } = useUser();
 
     const [isClockedIn, setIsClockedIn] = useState<boolean>(false);
     const [note, setNote] = useState('');
@@ -12,13 +13,13 @@ export default function ClockInPage() {
 
     useEffect(() => {
         const checkStatus = async () => {
+            if (!customer) return;
             try {
-                const res = await fetch(`http://localhost:3000/api/clock/status`, {
-                    credentials: "include",
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setIsClockedIn(data.isClockedIn);
+                const data = await fichagesAPI.getByUsuario(customer.id);
+                if (Array.isArray(data) && data.length > 0) {
+                    setIsClockedIn(data[0].tipo === 'entrada');
+                } else {
+                    setIsClockedIn(false);
                 }
             } catch (err) {
                 console.error("Error checking status", err);
@@ -27,30 +28,24 @@ export default function ClockInPage() {
             }
         };
         checkStatus();
-    }, []);
+    }, [customer]);
 
     const handleClockEvent = async () => {
-        const type = isClockedIn ? 'out' : 'in';
+        if (!customer) return;
+        const type = isClockedIn ? 'salida' : 'entrada';
         try {
-            const res = await fetch(`http://localhost:3000/api/clock`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({type, note }),
-                credentials: "include",
+            const data = await fichagesAPI.create({
+                id_usuario: customer.id,
+                tipo: type,
+                nota: note
             });
-
-            if (res.ok) {
-                const data = await res.json();
-                setIsClockedIn(!isClockedIn);
-                setNote('');
-                const date = new Date(data.event.recorded_at);
-                setMessage(`Fichaje de ${type === 'in' ? 'entrada' : 'salida'} registrado a las ${date.toLocaleTimeString()}`);
-            } else {
-                setMessage("Error al registrar el fichaje.");
-            }
+            setIsClockedIn(!isClockedIn);
+            setNote('');
+            const date = new Date(data.fecha);
+            setMessage(`Fichaje de ${type} registrado a las ${date.toLocaleTimeString()}`);
         } catch (err) {
             console.error("Error clocking", err);
-            setMessage("Error de conexión al fichar.");
+            setMessage("Error al registrar el fichaje.");
         }
     };
 

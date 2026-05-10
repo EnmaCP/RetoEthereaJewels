@@ -13,6 +13,9 @@ import { ReviewDAO } from "./dao/ReviewDAO.ts";
 import  { ColeccionDAO } from "./dao/ColeccionDAO.ts";
 import {ProductoDAO} from "./dao/ProductoDAO.ts";
 import { CarritoVarianteDAO } from "./dao/CarritoVarianteDAO.ts";
+import { WishlistDAO } from "./dao/WishlistDAO.ts";
+import { FichajeDAO } from "./dao/FichajeDAO.ts";
+import { DetalleDAO } from "./dao/DetalleDAO.ts";
 import { parse } from "node:path";
 
 
@@ -129,6 +132,19 @@ app.get("/api/productos/:id", async (req: Request<{id: string}>, res: Response) 
     }
 });
 
+//Crear un nuevo producto
+app.post("/api/productos", async (req: Request, res: Response) => {
+  try {
+      const nuevoProducto = req.body;
+      const productoCreado = await ProductoDAO.crear(nuevoProducto);
+      res.status(201).json(productoCreado);
+  } catch (error) {
+      console.error('Error al crear producto:', error);
+      res.status(500).json({ error: 'Error al crear el producto' });
+  }
+});
+
+
 //Ver el carrito de un usuario
 app.get("/api/carrito/:idUsuario", async (req: Request<{idUsuario: string}>, res: Response) => {
     try {
@@ -138,6 +154,188 @@ app.get("/api/carrito/:idUsuario", async (req: Request<{idUsuario: string}>, res
     } catch (error) {
         console.error('Error al obtener el carrito:', error);
         res.status(500).json({ error: 'Error al obtener el carrito' });
+    }
+});
+
+//Añadir item al carrito
+app.post("/api/carrito", async (req: Request, res: Response) => {
+    try {
+        const { id_carrito, id_variante, cantidad } = req.body;
+        if (!id_carrito || !id_variante) {
+            return res.status(400).json({ error: 'id_carrito e id_variante son obligatorios' });
+        }
+        const nuevoItem = await CarritoVarianteDAO.añadirItem({
+            id_carrito,
+            id_variante,
+            cantidad: cantidad || 1
+        });
+        res.status(201).json(nuevoItem);
+    } catch (error) {
+        console.error('Error al añadir item al carrito:', error);
+        res.status(500).json({ error: 'Error al añadir item al carrito' });
+    }
+});
+
+//Eliminar item del carrito
+app.delete("/api/carrito/:id", async (req: Request<{id: string}>, res: Response) => {
+    try {
+        const id = parseInt(req.params.id);
+        await CarritoVarianteDAO.eliminarItem(id);
+        res.json({ message: 'Item eliminado del carrito' });
+    } catch (error) {
+        console.error('Error al eliminar item del carrito:', error);
+        res.status(500).json({ error: 'Error al eliminar item del carrito' });
+    }
+});
+
+//Actualizar cantidad de un item en el carrito
+app.put("/api/carrito/:id", async (req: Request<{id: string}>, res: Response) => {
+    try {
+        const id = parseInt(req.params.id);
+        const { cantidad } = req.body;
+        if (!cantidad || cantidad < 1) {
+            return res.status(400).json({ error: 'La cantidad debe ser mayor a 0' });
+        }
+        const itemActualizado = await CarritoVarianteDAO.actualizarCantidad(id, cantidad);
+        res.json(itemActualizado);
+    } catch (error) {
+        console.error('Error al actualizar cantidad del carrito:', error);
+        res.status(500).json({ error: 'Error al actualizar cantidad del carrito' });
+    }
+});
+
+//Obtener variantes de un producto
+app.get("/api/variantes/:idProducto", async (req: Request<{idProducto: string}>, res: Response) => {
+    try {
+        const idProducto = parseInt(req.params.idProducto);
+        const variantes = await VarianteDAO.obtenerPorProducto(idProducto);
+        res.json(variantes);
+    } catch (error) {
+        console.error('Error al obtener variantes:', error);
+        res.status(500).json({ error: 'Error al obtener las variantes' });
+    }
+});
+
+//Crear una variante
+app.post("/api/variantes", async (req: Request, res: Response) => {
+    try {
+        const { id_producto, material, precio_extra, stock } = req.body;
+        if (!id_producto) {
+            return res.status(400).json({ error: 'id_producto es obligatorio' });
+        }
+        const nuevaVariante = await VarianteDAO.crear({
+            id_producto,
+            material,
+            precio_extra,
+            stock
+        });
+        res.status(201).json(nuevaVariante);
+    } catch (error) {
+        console.error('Error al crear variante:', error);
+        res.status(500).json({ error: 'Error al crear la variante' });
+    }
+});
+
+//Obtener detalles de una variante
+app.get("/api/detalle/:idVariante", async (req: Request<{idVariante: string}>, res: Response) => {
+    try {
+        const idVariante = parseInt(req.params.idVariante);
+        const detalle = await DetalleDAO.obtenerPorVariante(idVariante);
+        res.json(detalle);
+    } catch (error) {
+        console.error('Error al obtener detalle:', error);
+        res.status(500).json({ error: 'Error al obtener el detalle' });
+    }
+});
+
+//Crear detalle de una variante
+app.post("/api/detalle", async (req: Request, res: Response) => {
+    try {
+        const { id_variante, foto, grabado, precio_extra } = req.body;
+        if (!id_variante) {
+            return res.status(400).json({ error: 'id_variante es obligatorio' });
+        }
+        const nuevoDetalle = await DetalleDAO.crear({
+            id_variante,
+            foto,
+            grabado,
+            precio_extra
+        });
+        res.status(201).json(nuevoDetalle);
+    } catch (error) {
+        console.error('Error al crear detalle:', error);
+        res.status(500).json({ error: 'Error al crear el detalle' });
+    }
+});
+
+//Obtener wishlist de un usuario
+app.get("/api/wishlist/:idUsuario", async (req: Request<{idUsuario: string}>, res: Response) => {
+    try {
+        const idUsuario = parseInt(req.params.idUsuario);
+        const wishlist = await WishlistDAO.obtenerPorUsuario(idUsuario); // ← USA DAO
+        res.json(wishlist);
+    } catch (error) {
+        console.error('Error al obtener wishlist:', error);
+        res.status(500).json({ error: 'Error al obtener la lista de deseos' });
+    }
+});
+
+//Añadir a wishlist
+app.post("/api/wishlist", async (req: Request, res: Response) => {
+    try {
+        const { id_usuario, id_producto } = req.body;
+        if (!id_usuario || !id_producto) {
+            return res.status(400).json({ error: 'id_usuario e id_producto son obligatorios' });
+        }
+        const nuevoItem = await WishlistDAO.añadir(id_usuario, id_producto); // ← USA DAO
+        res.status(201).json(nuevoItem);
+    } catch (error) {
+        console.error('Error al añadir a wishlist:', error);
+        res.status(500).json({ error: 'Error al añadir a la lista de deseos' });
+    }
+});
+
+//Eliminar de wishlist
+app.delete("/api/wishlist/:idUsuario/:idProducto", async (req: Request<{idUsuario: string, idProducto: string}>, res: Response) => {
+    try {
+        const idUsuario = parseInt(req.params.idUsuario);
+        const idProducto = parseInt(req.params.idProducto);
+        await WishlistDAO.eliminar(idUsuario, idProducto); // ← USA DAO
+        res.json({ message: 'Producto eliminado de la lista de deseos' });
+    } catch (error) {
+        console.error('Error al eliminar de wishlist:', error);
+        res.status(500).json({ error: 'Error al eliminar de la lista de deseos' });
+    }
+});
+
+//Obtener fichajes de un empleado
+app.get("/api/fichajes/:idUsuario", async (req: Request<{idUsuario: string}>, res: Response) => {
+    try {
+        const idUsuario = parseInt(req.params.idUsuario);
+        const fichajes = await FichajeDAO.obtenerPorUsuario(idUsuario);
+        res.json(fichajes);
+    } catch (error) {
+        console.error('Error al obtener fichajes:', error);
+        res.status(500).json({ error: 'Error al obtener los fichajes' });
+    }
+});
+
+//Crear fichaje
+app.post("/api/fichajes", async (req: Request, res: Response) => {
+    try {
+        const { id_usuario, tipo, nota } = req.body;
+        if (!id_usuario || !tipo) {
+            return res.status(400).json({ error: 'id_usuario y tipo son obligatorios' });
+        }
+        const nuevoFichaje = await FichajeDAO.crear({
+            id_usuario,
+            tipo,
+            nota
+        });
+        res.status(201).json(nuevoFichaje);
+    } catch (error) {
+        console.error('Error al crear fichaje:', error);
+        res.status(500).json({ error: 'Error al crear el fichaje' });
     }
 });
 
@@ -449,58 +647,7 @@ app.patch("/api/orders/:id/status", verifyToken, requireRole("admin", "employee"
     res.status(500).json({ error: "Error al actualizar el estado del pedido" });
   }
 });
-/* Ya no es necesario - TAREA 2
-app.get("/api/orders/customer/:customerId", async (req, res) => {
-  try {
-    const { customerId } = req.params;
-    const result = await pool.query(`
-    SELECT o.id, o.status, o.address, o.created_at, SUM(oi.quantity * oi.unit_price) as total
-    FROM orders o
-    LEFT JOIN order_items oi ON o.id = oi.order_id
-    WHERE o.customer_id = $1
-    GROUP BY o.id
-    ORDER BY o.created_at DESC
-    `, [customerId]);
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error al obtener los pedidos" });
-  }
-});
-const total = items.reduce((sum, i) => sum + i.quantity * i.unitPrice, 0);
-const client = await pool.connect();
-try {
-    await client.query("BEGIN");
-    const orderResult = await client.query(
-        `INSERT INTO orders
-        (customer_id, status, total, address)
-        VALUES ($1, 'pending', $2, $3)
-        RETURNING *`,
-        [1, Math.round(total * 100) / 100, address]
-    );
-    const orderId = orderResult.rows[0].id;
-    for (const item of items) {
-        await client.query(
-            `INSERT INTO order_items
-            (order_id, product_id, quantity, unit_price)
-            VALUES ($1, $2, $3, $4)`,
-            [orderId, item.productId, item.quantity, item.unitPrice]
-        );
-        await client.query(
-            "UPDATE products SET stock = stock - $1 WHERE id = $2",
-            [item.quantity, item.productId]
-        );
-    }
-    await client.query("COMMIT");
-    res.status(201).json({ message: "Pedido creado", order: orderResult.rows[0] });
-} catch (err: any) {
-    console.error("Error en transacción POST /api/orders:", err);
-    await client.query("ROLLBACK");
-    res.status(500).json({ error: "Error al crear el pedido: " + (err.message || "") });
-} finally {
-    client.release();
-}
-});*/
+
 app.get("/api/products/:id/reviews", async (req: Request<{ id: string }>, res: Response) => {
   const productId = parseInt(req.params.id);
 
@@ -534,19 +681,19 @@ app.post("/api/products/:id/reviews", async (req, res) => {
     res.status(500).json({ error: "Error al crear la reseña" });
   }
 });
-app.post("/api/auth/register", async (req: Request<{}, {}, { username: string, password: string, email: string, full_name: string }>, res: Response) => {
-  const { username, password, email, full_name } = req.body;
-  if (!username || !password || !email) {
+app.post("/api/auth/register", async (req: Request, res: Response) => {
+  const { nombre_usuario, password, email } = req.body;
+  if (!nombre_usuario || !password || !email) {
     return res.status(400).json({ message: "Todos los campos son obligatorios" });
   }
   const passwordHash = await bcrypt.hash(password, 10);
-  const existingUser = await pool.query('SELECT * FROM customers WHERE username = $1 OR email = $2', [username, email]);
+  const existingUser = await pool.query('SELECT * FROM usuario WHERE nombre_usuario = $1 OR email = $2', [nombre_usuario, email]);
   if (existingUser.rows.length > 0) {
     return res.status(400).json({ message: "El usuario ya existe" });
   }
   const result = await pool.query(
-    'INSERT INTO customers (username, password_hash, email, full_name) VALUES ($1, $2, $3, $4) RETURNING id, username, email, full_name',
-    [username, passwordHash, email, full_name]
+    'INSERT INTO usuario (nombre_usuario, email, password_hash) VALUES ($1, $2, $3) RETURNING id, nombre_usuario, email, rol',
+    [nombre_usuario, email, passwordHash]
   );
   res.status(201).json({ message: "Usuario registrado correctamente", user: result.rows[0] });
 });
@@ -558,7 +705,7 @@ app.post("/api/auth/login", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Todos los campos son obligatorios" });
   }
   const userResult = await pool.query(
-    'SELECT * FROM customers WHERE username = $1 OR email = $1',
+    'SELECT * FROM usuario WHERE nombre_usuario = $1 OR email = $1',
     [identifier]
   );
 
@@ -573,7 +720,9 @@ app.post("/api/auth/login", async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Credenciales inválidas" });
   }
 
-  const tokenPayload = { id: user.id, username: user.username, role: user.role };
+  // Frontend context and decoding expects 'username' and 'role' in token payload, 
+  // so we map 'nombre_usuario' to 'username' and 'rol' to 'role'
+  const tokenPayload = { id: user.id, username: user.nombre_usuario, role: user.rol || 'cliente' };
   const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: "2h" });
 
   res.cookie("token", token, { httpOnly: true, secure: false, sameSite: "lax", maxAge: 2 * 60 * 60 * 1000 });
@@ -652,7 +801,7 @@ app.get("/api/admin/users",
   async (req: Request, res: Response) => {
     try {
       //lista todos los usuarios
-      const result = await pool.query("SELECT * FROM customers");
+      const result = await pool.query("SELECT id, nombre_usuario as username, email, rol as role, active, created_at FROM usuario");
       res.json(result.rows);
 
 
@@ -669,7 +818,7 @@ app.patch("/api/admin/users/:id/role", verifyToken, requireRole("admin"), async 
     if (isNaN(employeeId)) return res.status(400).json({ error: "employeeId is required" });
 
     const result = await pool.query(
-      "UPDATE customers SET role = $1 WHERE id = $2 RETURNING id, role",
+      "UPDATE usuario SET rol = $1 WHERE id = $2 RETURNING id, rol as role",
       [role, employeeId]
     );
     res.json(result.rows[0]);
@@ -686,7 +835,7 @@ app.patch("/api/admin/users/:id/status", verifyToken, requireRole("admin"), asyn
     if (isNaN(employeeId)) return res.status(400).json({ error: "employeeId is required" });
 
     const result = await pool.query(
-      "UPDATE customers SET active = $1 WHERE id = $2 RETURNING id, active",
+      "UPDATE usuario SET active = $1 WHERE id = $2 RETURNING id, active",
       [active, employeeId]
     );
     res.json(result.rows[0]);
@@ -698,7 +847,7 @@ app.patch("/api/admin/users/:id/status", verifyToken, requireRole("admin"), asyn
 
 app.get("/api/auth/user", verifyToken, async (req: AuthRequest, res: Response) => {
   try {
-    const user = await pool.query("SELECT * FROM customers WHERE id = $1", [req.customer!.id]);
+    const user = await pool.query("SELECT id, nombre_usuario as username, email, rol as role, active, created_at FROM usuario WHERE id = $1", [req.customer!.id]);
     res.json(user.rows[0]);
   } catch (error) {
     console.error(error);
@@ -717,51 +866,5 @@ app.get("/api/auth/me", verifyToken, async (req: AuthRequest, res: Response) => 
   } catch (error) {
     console.error("Error en /api/auth/me:", error);
     res.status(500).json({ error: "Error interno del servidor al verificar sesión" });
-  }
-});
-app.post('/api/wishlist', verifyToken, async (req: Request<{ id_usuario: string }>, res: Response) => {
-  const { id_producto } = req.body;
-  const id_usuario = parseInt(req.params.id_usuario);
-
-  try {
-    await pool.query(
-      'INSERT INTO wishlist (id_usuario, id_producto) VALUES ($1, $2)',
-      [id_usuario, id_producto]
-    );
-    res.status(201).json({ message: "Joya añadida a la lista de deseos" });
-  } catch (error) {
-    res.status(400).json({ error: "Esta joya ya está en tu lista" });
-  }
-});
-
-app.delete('/api/wishlist/:id_producto', verifyToken, async (req: Request<{ id_producto: string, id_usuario: string }>, res: Response) => {
-  const id_producto = parseInt(req.params.id_producto);
-  const id_usuario = parseInt(req.params.id_usuario);
-
-  try {
-    await pool.query(
-      'DELETE FROM wishlist WHERE id_usuario = $1 AND id_producto = $2',
-      [id_usuario, id_producto]
-    );
-    res.status(200).json({ message: "Joya eliminada" });
-  } catch (error) {
-    res.status(500).json({ error: "Error del servidor" });
-  }
-});
-
-app.get('/api/wishlist', verifyToken, async (req: Request<{ id_usuario: string }>, res: Response) => {
-  const id_usuario = parseInt(req.params.id_usuario);
-
-  try {
-    const result = await pool.query(`
-            SELECT p.* FROM producto p
-            JOIN wishlist w ON p.id = w.id_producto
-            WHERE w.id_usuario = $1
-            ORDER BY w.created_at DESC
-        `, [id_usuario]);
-
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ error: "Error del servidor" });
   }
 });

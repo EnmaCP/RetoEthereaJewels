@@ -21,10 +21,7 @@ import ShoppingCart from './components/ShoppingCart';
 import Catalogue from './components/Catalogue';
 import { Wishlist } from './components/Wishlist'
 import { Committee } from './components/ComiteEmpresa'
-
-
-
-
+import { Acuerdos } from './components/Acuerdos'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -68,6 +65,7 @@ createRoot(document.getElementById('root')!).render(
           <Route index element={<IntranetHome />} />
           <Route path="fichajes" element={<ClockInPage />} />
           <Route path="comite-empresa" element={<Committee />} />
+          <Route path="acuerdos" element={<Acuerdos />} />
         </Route>
 
         <Route

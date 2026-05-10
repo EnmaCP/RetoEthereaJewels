@@ -5,6 +5,7 @@ import { NotFound } from "./NotFound";
 import "./productDetail.css";
 import type { CartItem } from '../types';
 import type { Review } from '../types';
+import { productosAPI, reviewsAPI } from '../services/apiService';
 
 export function ProductDetail() {
     const { id } = useParams();
@@ -38,14 +39,21 @@ export function ProductDetail() {
     };
 
     useEffect(() => {
+        if (!id) return;
         setIsLoading(true);
-        fetch(`http://localhost:3000/api/products/${id}`)
-            .then(res => {
-                if (!res.ok) throw new Error("Producto no encontrado");
-                return res.json();
-            })
+        productosAPI.getById(Number(id))
             .then(data => {
-                setProduct(data);
+                const mappedProduct: Product = {
+                    id: data.id,
+                    name: data.nombre,
+                    description: data.descripcion || "",
+                    price: Number(data.precio_base),
+                    category: data.nombre_coleccion || "General",
+                    stock: 10, // Stock se maneja en variante
+                    imageUrl: data.image_url || data.imagen_url || `https://placehold.co/200x200?text=${encodeURIComponent(data.nombre)}`,
+                    active: data.active !== false,
+                };
+                setProduct(mappedProduct);
                 setIsLoading(false);
             })
             .catch(() => {
@@ -58,12 +66,22 @@ export function ProductDetail() {
     const [comment, setComment] = useState<string>("");
 
     const fetchReviews = () => {
-        fetch(`http://localhost:3000/api/products/${id}/reviews`)
-            .then(res => {
-                if (res.ok) return res.json();
-                return [];
+        if (!id) return;
+        reviewsAPI.getByProducto(Number(id))
+            .then(data => {
+                if (Array.isArray(data)) {
+                    const mappedReviews = data.map((r: any) => ({
+                        id: r.id,
+                        rating: r.valoracion,
+                        comment: r.comentario,
+                        created_at: r.created_at,
+                        username: "Usuario", 
+                    }));
+                    setReviews(mappedReviews);
+                } else {
+                    setReviews([]);
+                }
             })
-            .then(data => setReviews(Array.isArray(data) ? data : []))
             .catch(() => setReviews([]));
     };
 
@@ -73,18 +91,22 @@ export function ProductDetail() {
 
     const submitReview = (e: React.FormEvent) => {
         e.preventDefault();
-        fetch(`http://localhost:3000/api/products/${id}/reviews`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ rating, comment, customerId: 1 })
+        if (!id) return;
+        reviewsAPI.create({
+            id_producto: Number(id),
+            id_usuario: 1, // usuario simulado
+            valoracion: rating,
+            titulo: "Reseña",
+            comentario: comment
         })
-            .then(res => res.json())
             .then(() => {
                 fetchReviews();
                 setComment("");
                 setRating(5);
-            });
+            })
+            .catch((err) => console.error("Error al crear reseña:", err));
     };
+
 
     if (isLoading) {
         return <div style={{ textAlign: 'center', padding: '3rem' }}>Cargando detalles del producto...</div>;

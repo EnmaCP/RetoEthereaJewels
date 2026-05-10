@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { authAPI } from '../services/apiService';
 import './RegisterPage.css';
 
 export default function RegisterPage() {
@@ -9,6 +10,7 @@ export default function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleRegister = async (e: React.FormEvent) => {
@@ -21,31 +23,18 @@ export default function RegisterPage() {
             return;
         }
 
+        setIsLoading(true);
         try {
-            const res = await fetch('http://localhost:3000/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    username: nombre, 
-                    full_name: nombre, 
-                    email, 
-                    password 
-                })
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                setSuccess('¡Usuario creado correctamente! Redirigiendo al login...');
-                setTimeout(() => {
-                    navigate('/login');
-                }, 2000);
-            } else {
-                setError(data.message || 'Error al registrar usuario');
-            }
-        } catch (err) {
+            await authAPI.register(nombre, email, password);
+            setSuccess('¡Usuario creado correctamente! Redirigiendo al login...');
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+        } catch (err: any) {
             console.error(err);
-            setError('Error de conexión con el servidor');
+            setError(err.message || 'Error de conexión con el servidor');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -74,6 +63,7 @@ export default function RegisterPage() {
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
                         required
+                        disabled={isLoading}
                         className="register-input" 
                     />
                 </div>
@@ -85,6 +75,7 @@ export default function RegisterPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        disabled={isLoading}
                         className="register-input" 
                     />
                 </div>
@@ -96,6 +87,7 @@ export default function RegisterPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        disabled={isLoading}
                         className="register-input" 
                     />
                 </div>
@@ -107,11 +99,12 @@ export default function RegisterPage() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
+                        disabled={isLoading}
                         className="register-input" 
                     />
                 </div>
-                <button type="submit" className="register-button">
-                    Crear cuenta
+                <button type="submit" className="register-button" disabled={isLoading}>
+                    {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
                 </button>
             </form>
 

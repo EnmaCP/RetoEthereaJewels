@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from './UserContext'; 
+import { authAPI } from '../services/apiService';
 import './LoginPage.css';
 
 export default function LoginPage() {
     const [identifier, setIdentifier] = useState(''); 
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     
     const { setCustomer } = useUser(); 
@@ -14,26 +16,17 @@ export default function LoginPage() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setIsLoading(true);
 
         try {
-            const res = await fetch('http://localhost:3000/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ identifier, password }), 
-                credentials: "include" 
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                setCustomer(data.customer);
-                navigate('/intranet');
-            } else {
-                setError(data.message || 'Error al iniciar sesión');
-            }
-        } catch (err) {
+            const data = await authAPI.login(identifier, password);
+            setCustomer(data.customer);
+            navigate('/intranet');
+        } catch (err: any) {
             console.error(err);
-            setError('Error de conexión con el servidor');
+            setError(err.message || 'Error de conexión con el servidor');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -56,6 +49,7 @@ export default function LoginPage() {
                         value={identifier}
                         onChange={(e) => setIdentifier(e.target.value)}
                         required
+                        disabled={isLoading}
                         className="login-input" 
                     />
                 </div>
@@ -67,11 +61,12 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        disabled={isLoading}
                         className="login-input" 
                     />
                 </div>
-                <button type="submit" className="login-button">
-                    Entrar
+                <button type="submit" className="login-button" disabled={isLoading}>
+                    {isLoading ? 'Cargando...' : 'Entrar'}
                 </button>
             </form>
 
