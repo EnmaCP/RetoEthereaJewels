@@ -1,0 +1,204 @@
+.permisos-vacaciones-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #2d3436;
+}
+
+.pv-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    color: #1a1a1a;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.pv-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #d4af37, #f1c40f);
+    border-radius: 2px;
+}
+
+.pv-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* Vacaciones Section */
+.vacaciones-section h2, 
+.permisos-section h2,
+.normativa-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.vacaciones-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    background: #e1f5fe;
+    color: #0288d1;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.vacaciones-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.info-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #1a1a1a;
+}
+
+.info-item p {
+    color: #636e72;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.pv-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    background: #2d3436;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pv-btn:hover {
+    background: #d4af37;
+    transform: translateY(-2px);
+}
+
+.pv-btn.secondary {
+    background: transparent;
+    border: 2px solid #2d3436;
+    color: #2d3436;
+}
+
+.pv-btn.secondary:hover {
+    background: #2d3436;
+    color: white;
+}
+
+/* Permisos Section */
+.permisos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.permiso-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 5px solid #d4af37;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    transition: transform 0.3s ease;
+}
+
+.permiso-card:hover {
+    transform: translateX(5px);
+}
+
+.permiso-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.permiso-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #2c3e50;
+}
+
+.permiso-days {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #d4af37;
+    white-space: nowrap;
+}
+
+.permiso-card p {
+    font-size: 0.95rem;
+    color: #636e72;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Normativa Section */
+.normativa-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.normativa-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.normativa-card:hover {
+    background: white;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.normativa-card .icon {
+    font-size: 2rem;
+}
+
+.normativa-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1a1a1a;
+}
+
+.normativa-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #636e72;
+}
+
+@media (max-width: 768px) {
+    .vacaciones-card, .normativa-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pv-title {
+        font-size: 2rem;
+    }
+}

@@ -41,6 +41,9 @@ export default function IntranetLayout() {
                 <NavLink to="/intranet/acuerdos">
                     Acuerdos/Convenios
                 </NavLink>
+                <NavLink to="/intranet/permisos-vacaciones">
+                    Permisos y Vacaciones
+                </NavLink>
             </nav>
             </header>
             <main className="intranet-main">
