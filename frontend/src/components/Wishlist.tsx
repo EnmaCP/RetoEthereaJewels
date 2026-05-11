@@ -28,45 +28,31 @@ export function WishlistCard({ product, onRemove }: { product: Product, onRemove
         }
     };
 
-    return(
+    return (
         <div className="product-card">
-            <div className="product-image-container" style={{ position: "relative" }}>
-                <img 
-                    src={product.imageUrl} 
-                    alt={product.name} 
-                    style={{ width: "100%", borderRadius: "8px" }}
-                />
-                
+            <div className="product-card-image">
+                <img src={product.imageUrl} alt={product.name} />
                 <button 
                     onClick={toggleWishlist}
-                    className="wishlist-btn"
-                    style={{ 
-                        position: "absolute", 
-                        top: "10px", 
-                        right: "10px", 
-                        background: "transparent", 
-                        border: "none", 
-                        fontSize: "1.5rem", 
-                        cursor: "pointer" 
-                    }}
+                    className="wishlist-btn-overlay"
                     title={isFavorite ? "Remove from list" : "Add to wishlist"}
                 >
                     {isFavorite ? "❤️" : "🤍"}
                 </button>
             </div>
 
-            <div className="product-info" style={{ marginTop: "15px" }}>
-                <h3 style={{ margin: "0 0 10px 0" }}>{product.name}</h3>
+            <div className="product-card-info">
+                <h3>{product.name}</h3>
                 
-                <p className="price" style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
-                    {Number(product.price).toFixed(2)} €
+                <p className="price">
+                    {Number(product.price).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
                 </p>
                 
-                <p className="stock" style={{ color: product.stock > 0 ? "green" : "orange" }}>
-                    {product.stock > 0 ? "Disponible en taller" : "Por encargo (Bajo demanda)"}
+                <p className={`stock ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}>
+                    {product.stock > 0 ? "Disponible" : "Bajo demanda"}
                 </p>
 
-                <button className="btn-cart" disabled={product.stock === 0}>
+                <button className="btn-add-cart" disabled={product.stock === 0} style={{ width: '100%', marginTop: '10px' }}>
                     Añadir al carrito
                 </button>
             </div>

@@ -90,7 +90,7 @@ function App() {
 
   const handleDelete = async (id: number): Promise<void> => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
-    
+
     setProducts(prevProducts => prevProducts.filter(p => p.id !== id));
 
     try {
@@ -113,7 +113,7 @@ function App() {
     });
   };
 
-  useEffect(() =>{
+  useEffect(() => {
     sessionStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
@@ -122,69 +122,69 @@ function App() {
   return (
     <>
 
-          {customer?.role === "admin" && (
-            <div className="formulario-producto">
-              <h3>Añadir producto</h3>
-              <form onSubmit={handleSubmit} className="topbar-form">
-                <div className="form-group">
-                  <label htmlFor="name">Name:</label>
-                  <input type="text" id="name" name="name" value={newName} onChange={e => setNewName(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="description">Description:</label>
-                  <input type="text" id="description" name="description" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="price">Price:</label>
-                  <input type="text" id="price" name="price" value={newPrice} onChange={e => setNewPrice(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="collection">Collection name:</label>
-                  <input type="text" id="collection" name="collection" value={newCollection} onChange={e => setNewCollection(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="stock">Stock:</label>
-                  <input type="text" id="stock" name="stock" value={newStock} onChange={e => setNewStock(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="imageUrl">Imagen:</label>
-                  <input type="text" id="imageUrl" name="imageUrl" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} />
-                </div>
-                <div className="form-group btn-group">
-                  <button type="submit">Add</button>
-                </div>
-              </form>
+      {customer?.role === "admin" && (
+        <div className="formulario-producto">
+          <h3>Añadir producto</h3>
+          <form onSubmit={handleSubmit} className="topbar-form">
+            <div className="form-group">
+              <label htmlFor="name">Name:</label>
+              <input type="text" id="name" name="name" value={newName} onChange={e => setNewName(e.target.value)} />
             </div>
-          )}
+            <div className="form-group">
+              <label htmlFor="description">Description:</label>
+              <input type="text" id="description" name="description" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="price">Price:</label>
+              <input type="text" id="price" name="price" value={newPrice} onChange={e => setNewPrice(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="collection">Collection name:</label>
+              <input type="text" id="collection" name="collection" value={newCollection} onChange={e => setNewCollection(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="stock">Stock:</label>
+              <input type="text" id="stock" name="stock" value={newStock} onChange={e => setNewStock(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="imageUrl">Imagen:</label>
+              <input type="text" id="imageUrl" name="imageUrl" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} />
+            </div>
+            <div className="form-group btn-group">
+              <button type="submit">Add</button>
+            </div>
+          </form>
+        </div>
+      )}
 
-          <div className="products-grid">
-            {products.map((product) => (
-              <div key={product.id} className="product-item-wrapper">
-                <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
+      <div className="products-grid">
+        {products.map((product) => (
+          <div key={product.id} className="product-item-wrapper">
+            <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
 
-                <button title="Add to cart" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
-                  onClick={() => addToCart(product)}>
-                  🛒
+            <button title="Add to cart" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
+              onClick={() => addToCart(product)}>
+              🛒
+            </button>
+
+            <div className="product-actions">
+              {(customer?.role === "admin" || customer?.role === "employee") && (
+                <button className='editarStock' title="Editar stock"
+                  onClick={() => handleUpdateStock(product.id, product.stock)}>
+                  ✏️
                 </button>
+              )}
 
-                <div className="product-actions">
-                  {(customer?.role === "admin" || customer?.role === "employee") && (
-                    <button className='editarStock' title="Editar stock"
-                      onClick={() => handleUpdateStock(product.id, product.stock)}>
-                      ✏️
-                    </button>
-                  )}
-
-                  {customer?.role === "admin" && (
-                    <button title="Borrar" className="btn-danger"
-                      onClick={() => handleDelete(product.id)}>
-                      🗑️
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+              {customer?.role === "admin" && (
+                <button title="Borrar" className="btn-danger"
+                  onClick={() => handleDelete(product.id)}>
+                  🗑️
+                </button>
+              )}
+            </div>
           </div>
+        ))}
+      </div>
     </>
   );
 }

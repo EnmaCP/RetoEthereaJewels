@@ -73,26 +73,6 @@ export function PermisosVacaciones() {
                         ))}
                     </div>
                 </section>
-                
-                <section className="normativa-section">
-                    <h2>Normativa y Documentación</h2>
-                    <div className="normativa-grid">
-                        <div className="normativa-card">
-                            <div className="icon">📄</div>
-                            <div className="normativa-info">
-                                <h4>Estatuto de los Trabajadores</h4>
-                                <p>Consulta el artículo 37 y 38 sobre descansos y vacaciones.</p>
-                            </div>
-                        </div>
-                        <div className="normativa-card">
-                            <div className="icon">📁</div>
-                            <div className="normativa-info">
-                                <h4>Convenio Colectivo Etherea</h4>
-                                <p>Mejoras específicas aplicables a nuestra empresa.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
             </div>
         </div>
     );

@@ -75,6 +75,26 @@ export function Committee() {
                         </div>
                     </section>
 
+                    <section className="contacto-comite">
+                        <h2>Contacta con nosotros</h2>
+                        <p>Si tienes alguna duda, sugerencia o necesitas ayuda con algún tema laboral, no dudes en escribirnos de forma totalmente confidencial.</p>
+                        <form className="contacto-form">
+                            <div className="form-group">
+                                <label>Nombre</label>
+                                <input type="text" placeholder="Tu nombre" />
+                            </div>
+                            <div className="form-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" placeholder="tu@email.com" />
+                            </div>
+                            <div className="form-group">
+                                <label>Mensaje / Consulta</label>
+                                <textarea placeholder="¿En qué podemos ayudarte?"></textarea>
+                            </div>
+                            <button type="submit" className="submit-btn">Enviar Mensaje</button>
+                        </form>
+                    </section>
+
                 </div>
 
                 {/* COLUMNA DERECHA */}

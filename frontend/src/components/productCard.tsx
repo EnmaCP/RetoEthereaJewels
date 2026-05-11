@@ -11,13 +11,23 @@ export function ProductCard({product, onSelect}: ProductCardProps){
 
     return (
         <div className="product-card" onClick={() => onSelect && onSelect(product.id)}>
-            <img src={product.imageUrl} alt={product.name} />
-            <h3>{product.name}</h3>
-            <p className="rating">{stars}</p>
-            <p className="price">${product.price}</p>
-            <p className={`stock ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}>
-                {product.stock > 0 ? `En Stock - ${product.stock} unidades` : "Sin Stock - 0 unidades"}
-            </p>
+            <div className="product-card-image">
+                <img src={product.imageUrl} alt={product.name} />
+            </div>
+            <div className="product-card-info">
+                <h3>{product.name}</h3>
+                <div className="rating">
+                    {ratingNum > 0 ? (
+                        <span className="stars">{"★".repeat(ratingNum)}{"☆".repeat(5 - ratingNum)}</span>
+                    ) : (
+                        <span className="no-rating">Sin valoraciones</span>
+                    )}
+                </div>
+                <p className="price">{product.price.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</p>
+                <p className={`stock ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}>
+                    {product.stock > 0 ? `En Stock: ${product.stock}` : "Agotado"}
+                </p>
+            </div>
         </div>
     );
 }

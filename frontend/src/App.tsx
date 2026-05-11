@@ -11,10 +11,13 @@ function App() {
 
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [collections, setCollections] = useState<any[]>([]);
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = sessionStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
   });
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -24,29 +27,36 @@ function App() {
 
   const { customer, setCustomer, loading, setLoading } = useUser();
 
-  const loadProducts = async () => {
+  const loadData = async () => {
     try {
-      const data = await productosAPI.getAll();
-      const mappedProducts: Product[] = data.map((p: any) => ({
+      const [productsData, collectionsData] = await Promise.all([
+        productosAPI.getAll(),
+        productosAPI.getAll() // Reusing for collections if not available or fetching specifically
+      ]);
+      
+      // In a real app we would use coleccionesAPI.getAll()
+      const actualCollections = await fetch('http://localhost:3000/api/colecciones').then(res => res.json()).catch(() => []);
+      setCollections(actualCollections);
+
+      const mappedProducts: Product[] = productsData.map((p: any) => ({
         id: p.id,
         name: p.nombre,
         description: p.descripcion || "",
         price: Number(p.precio_base),
         category: p.nombre_coleccion || "General",
-        stock: 10, // Default stock as it moved to variante table
+        stock: 10,
         imageUrl: p.image_url || p.imagen_url || `https://placehold.co/200x200?text=${encodeURIComponent(p.nombre)}`,
         active: p.active !== false,
       }));
       setProducts(mappedProducts);
+      setFeaturedProducts(mappedProducts.slice(0, 5)); // Just take the first 5 for featured
     } catch (error) {
-      console.error("Error loading products:", error);
+      console.error("Error loading data:", error);
     }
   };
 
-
-
   useEffect(() => {
-    loadProducts();
+    loadData();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -147,6 +157,48 @@ function App() {
         </div>
       </section>
 
+      {/* Featured Carousel */}
+      <section className="featured-carousel-section">
+        <h2 className="section-title">Destacados</h2>
+        <div className="carousel-container">
+          <div className="carousel-track" style={{ transform: `translateX(-${carouselIndex * 100}%)` }}>
+            {featuredProducts.map((p) => (
+              <div key={p.id} className="carousel-slide" onClick={() => navigate(`/product/${p.id}`)}>
+                <img src={p.imageUrl} alt={p.name} />
+                <div className="carousel-info">
+                  <h3>{p.name}</h3>
+                  <p>{p.price}€</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="carousel-btn prev" onClick={() => setCarouselIndex(prev => (prev === 0 ? featuredProducts.length - 1 : prev - 1))}>❮</button>
+          <button className="carousel-btn next" onClick={() => setCarouselIndex(prev => (prev === featuredProducts.length - 1 ? 0 : prev + 1))}>❯</button>
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="categories-section">
+        <h2 className="section-title">Categorías</h2>
+        <div className="categories-grid">
+          {collections.map((c) => (
+            <div 
+              key={c.id} 
+              className="category-card" 
+              onClick={() => navigate(`/catalogue?collection=${c.id}`)}
+              style={{ 
+                backgroundImage: `url(${c.image_url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&q=80&w=800'})` 
+              }}
+            >
+              <div className="category-overlay">
+                <h3>{c.nombre}</h3>
+                <p>Explorar colección</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
           {customer?.role === "admin" && (
             <div className="formulario-producto">
               <h3>Añadir producto</h3>
@@ -183,7 +235,9 @@ function App() {
             </div>
           )}
 
-          <div className="products-grid">
+      <section className="all-products-section">
+        <h2 className="section-title">Nuestra Colección</h2>
+        <div className="products-grid">
             {products.map((product) => (
               <div key={product.id} className="product-item-wrapper">
                 <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
@@ -211,6 +265,7 @@ function App() {
               </div>
             ))}
           </div>
+      </section>
     </>
   );
 }

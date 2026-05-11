@@ -156,3 +156,80 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Contacto Section Styles */
+.contacto-comite {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #c9af8c;
+}
+
+.contacto-comite p {
+    font-size: 1rem;
+    margin-bottom: 25px;
+    color: #666;
+}
+
+.contacto-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contacto-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contacto-form label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #4a3832;
+}
+
+.contacto-form input,
+.contacto-form textarea {
+    padding: 12px;
+    border: 1px solid #c9af8c;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    background-color: rgba(201, 175, 140, 0.05);
+    transition: all 0.3s ease;
+}
+
+.contacto-form input:focus,
+.contacto-form textarea:focus {
+    outline: none;
+    border-color: #4a3832;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(74, 56, 50, 0.1);
+}
+
+.contacto-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.submit-btn {
+    padding: 15px 25px;
+    background-color: #4a3832;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    align-self: flex-start;
+}
+
+.submit-btn:hover {
+    background-color: #c9af8c;
+    transform: translateY(-2px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}

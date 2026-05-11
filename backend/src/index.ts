@@ -10,8 +10,8 @@ import cookieParser from "cookie-parser";
 import { UsuarioDAO } from "./dao/UsuarioDAO.ts";
 import { VarianteDAO } from "./dao/VarianteDAO.ts";
 import { ReviewDAO } from "./dao/ReviewDAO.ts";
-import  { ColeccionDAO } from "./dao/ColeccionDAO.ts";
-import {ProductoDAO} from "./dao/ProductoDAO.ts";
+import { ColeccionDAO } from "./dao/ColeccionDAO.ts";
+import { ProductoDAO } from "./dao/ProductoDAO.ts";
 import { CarritoVarianteDAO } from "./dao/CarritoVarianteDAO.ts";
 import { WishlistDAO } from "./dao/WishlistDAO.ts";
 import { FichajeDAO } from "./dao/FichajeDAO.ts";
@@ -34,313 +34,314 @@ app.use(cookieParser());
 
 //Obtener todas las colecciones
 app.get('/api/colecciones', async (req: Request, res: Response) => {
-    try {
-      const colecciones = await ColeccionDAO.obtenerTodas();
-      res.json(colecciones);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Error al obtener las colecciones" });
-    }
+  try {
+    const colecciones = await ColeccionDAO.obtenerTodas();
+    res.json(colecciones);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener las colecciones" });
+  }
 
 });
 
 //Crear un usuario
 app.post("/api/usuarios", async (req: Request, res: Response) => {
-try{
+  try {
     const { nombre_usuario, email, password } = req.body;
     const nuevoUsuario = await UsuarioDAO.crearUsuario(nombre_usuario, email, password);
     res.status(201).json(nuevoUsuario);
-}catch(error){
+  } catch (error) {
     res.status(500).json({ error: "Error al crear el usuario" });
-}
+  }
 });
 
 // Ruta para obtener todos los usuarios
 app.get('/api/usuarios', async (req: Request, res: Response) => {
-    try {
-        const usuarios = await UsuarioDAO.obtenerTodos();
-        res.json(usuarios);
-    } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
+  try {
+    const usuarios = await UsuarioDAO.obtenerTodos();
+    res.json(usuarios);
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
 //Ver las variantes de un producto en concreto
-app.get("/api/productos/variantes/:idProducto", async (req: Request<{idProducto: string}>, res: Response) => {
-    try {
-        const idProducto = parseInt(req.params.idProducto);
-        const variantes = await VarianteDAO.obtenerPorProducto(idProducto);
-        res.json(variantes);
-    } catch (error) {
-        console.error('Error al obtener variantes:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
+app.get("/api/productos/variantes/:idProducto", async (req: Request<{ idProducto: string }>, res: Response) => {
+  try {
+    const idProducto = parseInt(req.params.idProducto);
+    const variantes = await VarianteDAO.obtenerPorProducto(idProducto);
+    res.json(variantes);
+  } catch (error) {
+    console.error('Error al obtener variantes:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
 //Ver las reviews de un producto en concreto
-app.get("/api/reviews/:idProducto", async (req: Request<{idProducto: string}>, res: Response) => {
-    try {
-        const idProducto = parseInt(req.params.idProducto);
-        const reviews = await ReviewDAO.obtenerPorProducto(idProducto);
-        res.json(reviews);
-    } catch (error) {
-        console.error('Error al obtener reviews:', error);
-        res.status(500).json({ error: 'Error al obtener las reseñas' });
-    }
+app.get("/api/reviews/:idProducto", async (req: Request<{ idProducto: string }>, res: Response) => {
+  try {
+    const idProducto = parseInt(req.params.idProducto);
+    const reviews = await ReviewDAO.obtenerPorProducto(idProducto);
+    res.json(reviews);
+  } catch (error) {
+    console.error('Error al obtener reviews:', error);
+    res.status(500).json({ error: 'Error al obtener las reseñas' });
+  }
 });
 
 //Crear una review para un producto
 app.post("/api/reviews", async (req: Request, res: Response) => {
-    try {
-        //donde el frontend nos manda los datos de la review
-        const nuevaReview = req.body;
-        //se la pasamos al DAO para que la guarde en la base de datos
-        const reviewCreada = await ReviewDAO.crear(nuevaReview);
-        //Respondemos con estado de creado con exito
-        res.status(201).json(reviewCreada);
-    } catch (error) {
-      console.error('Error al crear la review:', error);
-      res.status(500).json({ error: 'Error al crear la reseña' });
-    }
+  try {
+    //donde el frontend nos manda los datos de la review
+    const nuevaReview = req.body;
+    //se la pasamos al DAO para que la guarde en la base de datos
+    const reviewCreada = await ReviewDAO.crear(nuevaReview);
+    //Respondemos con estado de creado con exito
+    res.status(201).json(reviewCreada);
+  } catch (error) {
+    console.error('Error al crear la review:', error);
+    res.status(500).json({ error: 'Error al crear la reseña' });
+  }
 });
 
 //Obtener todos los productos (para el catálogo)
 app.get("/api/productos", async (req: Request, res: Response) => {
-    try {
-        const productos = await ProductoDAO.obtenerTodos();
-        res.json(productos);
-    } catch (error) {
-        console.error('Error al obtener productos:', error);
-        res.status(500).json({ error: 'Error al obtener los productos' });
-    }
+  try {
+    const productos = await ProductoDAO.obtenerTodos();
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener productos:', error);
+    res.status(500).json({ error: 'Error al obtener los productos' });
+  }
 });
 
 //Obtener un producto específico con sus variantes 
-app.get("/api/productos/:id", async (req: Request<{id: string}>, res: Response) => {
-  try{
-  const id = parseInt(req.params.id);
-  const producto = await ProductoDAO.obtenerPorId(id);
-  if(producto){
-    res.json(producto);
-  } else {
-    res.status(404).json({ error: 'Producto no encontrado' });
-  }}
-    catch (error) {
-        console.error('Error al obtener el producto:', error);
-        res.status(500).json({ error: 'Error al obtener el producto' });
+app.get("/api/productos/:id", async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const producto = await ProductoDAO.obtenerPorId(id);
+    if (producto) {
+      res.json(producto);
+    } else {
+      res.status(404).json({ error: 'Producto no encontrado' });
     }
+  }
+  catch (error) {
+    console.error('Error al obtener el producto:', error);
+    res.status(500).json({ error: 'Error al obtener el producto' });
+  }
 });
 
 //Crear un nuevo producto
 app.post("/api/productos", async (req: Request, res: Response) => {
   try {
-      const nuevoProducto = req.body;
-      const productoCreado = await ProductoDAO.crear(nuevoProducto);
-      res.status(201).json(productoCreado);
+    const nuevoProducto = req.body;
+    const productoCreado = await ProductoDAO.crear(nuevoProducto);
+    res.status(201).json(productoCreado);
   } catch (error) {
-      console.error('Error al crear producto:', error);
-      res.status(500).json({ error: 'Error al crear el producto' });
+    console.error('Error al crear producto:', error);
+    res.status(500).json({ error: 'Error al crear el producto' });
   }
 });
 
 
 //Ver el carrito de un usuario
-app.get("/api/carrito/:idUsuario", async (req: Request<{idUsuario: string}>, res: Response) => {
-    try {
-        const idUsuario = parseInt(req.params.idUsuario);
-        const itemsCarrito = await CarritoVarianteDAO.obtenerPorUsuario(idUsuario);
-        res.json(itemsCarrito);
-    } catch (error) {
-        console.error('Error al obtener el carrito:', error);
-        res.status(500).json({ error: 'Error al obtener el carrito' });
-    }
+app.get("/api/carrito/:idUsuario", async (req: Request<{ idUsuario: string }>, res: Response) => {
+  try {
+    const idUsuario = parseInt(req.params.idUsuario);
+    const itemsCarrito = await CarritoVarianteDAO.obtenerPorUsuario(idUsuario);
+    res.json(itemsCarrito);
+  } catch (error) {
+    console.error('Error al obtener el carrito:', error);
+    res.status(500).json({ error: 'Error al obtener el carrito' });
+  }
 });
 
 //Añadir item al carrito
 app.post("/api/carrito", async (req: Request, res: Response) => {
-    try {
-        const { id_carrito, id_variante, cantidad } = req.body;
-        if (!id_carrito || !id_variante) {
-            return res.status(400).json({ error: 'id_carrito e id_variante son obligatorios' });
-        }
-        const nuevoItem = await CarritoVarianteDAO.añadirItem({
-            id_carrito,
-            id_variante,
-            cantidad: cantidad || 1
-        });
-        res.status(201).json(nuevoItem);
-    } catch (error) {
-        console.error('Error al añadir item al carrito:', error);
-        res.status(500).json({ error: 'Error al añadir item al carrito' });
+  try {
+    const { id_carrito, id_variante, cantidad } = req.body;
+    if (!id_carrito || !id_variante) {
+      return res.status(400).json({ error: 'id_carrito e id_variante son obligatorios' });
     }
+    const nuevoItem = await CarritoVarianteDAO.añadirItem({
+      id_carrito,
+      id_variante,
+      cantidad: cantidad || 1
+    });
+    res.status(201).json(nuevoItem);
+  } catch (error) {
+    console.error('Error al añadir item al carrito:', error);
+    res.status(500).json({ error: 'Error al añadir item al carrito' });
+  }
 });
 
 //Eliminar item del carrito
-app.delete("/api/carrito/:id", async (req: Request<{id: string}>, res: Response) => {
-    try {
-        const id = parseInt(req.params.id);
-        await CarritoVarianteDAO.eliminarItem(id);
-        res.json({ message: 'Item eliminado del carrito' });
-    } catch (error) {
-        console.error('Error al eliminar item del carrito:', error);
-        res.status(500).json({ error: 'Error al eliminar item del carrito' });
-    }
+app.delete("/api/carrito/:id", async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    await CarritoVarianteDAO.eliminarItem(id);
+    res.json({ message: 'Item eliminado del carrito' });
+  } catch (error) {
+    console.error('Error al eliminar item del carrito:', error);
+    res.status(500).json({ error: 'Error al eliminar item del carrito' });
+  }
 });
 
 //Actualizar cantidad de un item en el carrito
-app.put("/api/carrito/:id", async (req: Request<{id: string}>, res: Response) => {
-    try {
-        const id = parseInt(req.params.id);
-        const { cantidad } = req.body;
-        if (!cantidad || cantidad < 1) {
-            return res.status(400).json({ error: 'La cantidad debe ser mayor a 0' });
-        }
-        const itemActualizado = await CarritoVarianteDAO.actualizarCantidad(id, cantidad);
-        res.json(itemActualizado);
-    } catch (error) {
-        console.error('Error al actualizar cantidad del carrito:', error);
-        res.status(500).json({ error: 'Error al actualizar cantidad del carrito' });
+app.put("/api/carrito/:id", async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { cantidad } = req.body;
+    if (!cantidad || cantidad < 1) {
+      return res.status(400).json({ error: 'La cantidad debe ser mayor a 0' });
     }
+    const itemActualizado = await CarritoVarianteDAO.actualizarCantidad(id, cantidad);
+    res.json(itemActualizado);
+  } catch (error) {
+    console.error('Error al actualizar cantidad del carrito:', error);
+    res.status(500).json({ error: 'Error al actualizar cantidad del carrito' });
+  }
 });
 
 //Obtener variantes de un producto
-app.get("/api/variantes/:idProducto", async (req: Request<{idProducto: string}>, res: Response) => {
-    try {
-        const idProducto = parseInt(req.params.idProducto);
-        const variantes = await VarianteDAO.obtenerPorProducto(idProducto);
-        res.json(variantes);
-    } catch (error) {
-        console.error('Error al obtener variantes:', error);
-        res.status(500).json({ error: 'Error al obtener las variantes' });
-    }
+app.get("/api/variantes/:idProducto", async (req: Request<{ idProducto: string }>, res: Response) => {
+  try {
+    const idProducto = parseInt(req.params.idProducto);
+    const variantes = await VarianteDAO.obtenerPorProducto(idProducto);
+    res.json(variantes);
+  } catch (error) {
+    console.error('Error al obtener variantes:', error);
+    res.status(500).json({ error: 'Error al obtener las variantes' });
+  }
 });
 
 //Crear una variante
 app.post("/api/variantes", async (req: Request, res: Response) => {
-    try {
-        const { id_producto, material, precio_extra, stock } = req.body;
-        if (!id_producto) {
-            return res.status(400).json({ error: 'id_producto es obligatorio' });
-        }
-        const nuevaVariante = await VarianteDAO.crear({
-            id_producto,
-            material,
-            precio_extra,
-            stock
-        });
-        res.status(201).json(nuevaVariante);
-    } catch (error) {
-        console.error('Error al crear variante:', error);
-        res.status(500).json({ error: 'Error al crear la variante' });
+  try {
+    const { id_producto, material, precio_extra, stock } = req.body;
+    if (!id_producto) {
+      return res.status(400).json({ error: 'id_producto es obligatorio' });
     }
+    const nuevaVariante = await VarianteDAO.crear({
+      id_producto,
+      material,
+      precio_extra,
+      stock
+    });
+    res.status(201).json(nuevaVariante);
+  } catch (error) {
+    console.error('Error al crear variante:', error);
+    res.status(500).json({ error: 'Error al crear la variante' });
+  }
 });
 
 //Obtener detalles de una variante
-app.get("/api/detalle/:idVariante", async (req: Request<{idVariante: string}>, res: Response) => {
-    try {
-        const idVariante = parseInt(req.params.idVariante);
-        const detalle = await DetalleDAO.obtenerPorVariante(idVariante);
-        res.json(detalle);
-    } catch (error) {
-        console.error('Error al obtener detalle:', error);
-        res.status(500).json({ error: 'Error al obtener el detalle' });
-    }
+app.get("/api/detalle/:idVariante", async (req: Request<{ idVariante: string }>, res: Response) => {
+  try {
+    const idVariante = parseInt(req.params.idVariante);
+    const detalle = await DetalleDAO.obtenerPorVariante(idVariante);
+    res.json(detalle);
+  } catch (error) {
+    console.error('Error al obtener detalle:', error);
+    res.status(500).json({ error: 'Error al obtener el detalle' });
+  }
 });
 
 //Crear detalle de una variante
 app.post("/api/detalle", async (req: Request, res: Response) => {
-    try {
-        const { id_variante, foto, grabado, precio_extra } = req.body;
-        if (!id_variante) {
-            return res.status(400).json({ error: 'id_variante es obligatorio' });
-        }
-        const nuevoDetalle = await DetalleDAO.crear({
-            id_variante,
-            foto,
-            grabado,
-            precio_extra
-        });
-        res.status(201).json(nuevoDetalle);
-    } catch (error) {
-        console.error('Error al crear detalle:', error);
-        res.status(500).json({ error: 'Error al crear el detalle' });
+  try {
+    const { id_variante, foto, grabado, precio_extra } = req.body;
+    if (!id_variante) {
+      return res.status(400).json({ error: 'id_variante es obligatorio' });
     }
+    const nuevoDetalle = await DetalleDAO.crear({
+      id_variante,
+      foto,
+      grabado,
+      precio_extra
+    });
+    res.status(201).json(nuevoDetalle);
+  } catch (error) {
+    console.error('Error al crear detalle:', error);
+    res.status(500).json({ error: 'Error al crear el detalle' });
+  }
 });
 
 //Obtener wishlist de un usuario
-app.get("/api/wishlist/:idUsuario", async (req: Request<{idUsuario: string}>, res: Response) => {
-    try {
-        const idUsuario = parseInt(req.params.idUsuario);
-        const wishlist = await WishlistDAO.obtenerPorUsuario(idUsuario); // ← USA DAO
-        res.json(wishlist);
-    } catch (error) {
-        console.error('Error al obtener wishlist:', error);
-        res.status(500).json({ error: 'Error al obtener la lista de deseos' });
-    }
+app.get("/api/wishlist/:idUsuario", async (req: Request<{ idUsuario: string }>, res: Response) => {
+  try {
+    const idUsuario = parseInt(req.params.idUsuario);
+    const wishlist = await WishlistDAO.obtenerPorUsuario(idUsuario); // ← USA DAO
+    res.json(wishlist);
+  } catch (error) {
+    console.error('Error al obtener wishlist:', error);
+    res.status(500).json({ error: 'Error al obtener la lista de deseos' });
+  }
 });
 
 //Añadir a wishlist
 app.post("/api/wishlist", async (req: Request, res: Response) => {
-    try {
-        const { id_usuario, id_producto } = req.body;
-        if (!id_usuario || !id_producto) {
-            return res.status(400).json({ error: 'id_usuario e id_producto son obligatorios' });
-        }
-        const nuevoItem = await WishlistDAO.añadir(id_usuario, id_producto); // ← USA DAO
-        res.status(201).json(nuevoItem);
-    } catch (error) {
-        console.error('Error al añadir a wishlist:', error);
-        res.status(500).json({ error: 'Error al añadir a la lista de deseos' });
+  try {
+    const { id_usuario, id_producto } = req.body;
+    if (!id_usuario || !id_producto) {
+      return res.status(400).json({ error: 'id_usuario e id_producto son obligatorios' });
     }
+    const nuevoItem = await WishlistDAO.añadir(id_usuario, id_producto); // ← USA DAO
+    res.status(201).json(nuevoItem);
+  } catch (error) {
+    console.error('Error al añadir a wishlist:', error);
+    res.status(500).json({ error: 'Error al añadir a la lista de deseos' });
+  }
 });
 
 //Eliminar de wishlist
-app.delete("/api/wishlist/:idUsuario/:idProducto", async (req: Request<{idUsuario: string, idProducto: string}>, res: Response) => {
-    try {
-        const idUsuario = parseInt(req.params.idUsuario);
-        const idProducto = parseInt(req.params.idProducto);
-        await WishlistDAO.eliminar(idUsuario, idProducto); // ← USA DAO
-        res.json({ message: 'Producto eliminado de la lista de deseos' });
-    } catch (error) {
-        console.error('Error al eliminar de wishlist:', error);
-        res.status(500).json({ error: 'Error al eliminar de la lista de deseos' });
-    }
+app.delete("/api/wishlist/:idUsuario/:idProducto", async (req: Request<{ idUsuario: string, idProducto: string }>, res: Response) => {
+  try {
+    const idUsuario = parseInt(req.params.idUsuario);
+    const idProducto = parseInt(req.params.idProducto);
+    await WishlistDAO.eliminar(idUsuario, idProducto); // ← USA DAO
+    res.json({ message: 'Producto eliminado de la lista de deseos' });
+  } catch (error) {
+    console.error('Error al eliminar de wishlist:', error);
+    res.status(500).json({ error: 'Error al eliminar de la lista de deseos' });
+  }
 });
 
 //Obtener fichajes de un empleado
-app.get("/api/fichajes/:idUsuario", async (req: Request<{idUsuario: string}>, res: Response) => {
-    try {
-        const idUsuario = parseInt(req.params.idUsuario);
-        const fichajes = await FichajeDAO.obtenerPorUsuario(idUsuario);
-        res.json(fichajes);
-    } catch (error) {
-        console.error('Error al obtener fichajes:', error);
-        res.status(500).json({ error: 'Error al obtener los fichajes' });
-    }
+app.get("/api/fichajes/:idUsuario", async (req: Request<{ idUsuario: string }>, res: Response) => {
+  try {
+    const idUsuario = parseInt(req.params.idUsuario);
+    const fichajes = await FichajeDAO.obtenerPorUsuario(idUsuario);
+    res.json(fichajes);
+  } catch (error) {
+    console.error('Error al obtener fichajes:', error);
+    res.status(500).json({ error: 'Error al obtener los fichajes' });
+  }
 });
 
 //Crear fichaje
 app.post("/api/fichajes", async (req: Request, res: Response) => {
-    try {
-        const { id_usuario, tipo, nota } = req.body;
-        if (!id_usuario || !tipo) {
-            return res.status(400).json({ error: 'id_usuario y tipo son obligatorios' });
-        }
-        const nuevoFichaje = await FichajeDAO.crear({
-            id_usuario,
-            tipo,
-            nota
-        });
-        res.status(201).json(nuevoFichaje);
-    } catch (error) {
-        console.error('Error al crear fichaje:', error);
-        res.status(500).json({ error: 'Error al crear el fichaje' });
+  try {
+    const { id_usuario, tipo, nota } = req.body;
+    if (!id_usuario || !tipo) {
+      return res.status(400).json({ error: 'id_usuario y tipo son obligatorios' });
     }
+    const nuevoFichaje = await FichajeDAO.crear({
+      id_usuario,
+      tipo,
+      nota
+    });
+    res.status(201).json(nuevoFichaje);
+  } catch (error) {
+    console.error('Error al crear fichaje:', error);
+    res.status(500).json({ error: 'Error al crear el fichaje' });
+  }
 });
 
-interface AuthRequest extends Request{
-  customer?: {id:number, username: string, role: string};
+interface AuthRequest extends Request {
+  customer?: { id: number, username: string, role: string };
 }
 const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
 

@@ -75,7 +75,7 @@ export function ProductDetail() {
                         rating: r.valoracion,
                         comment: r.comentario,
                         created_at: r.created_at,
-                        username: "Usuario", 
+                        username: "Usuario",
                     }));
                     setReviews(mappedReviews);
                 } else {
@@ -126,7 +126,7 @@ export function ProductDetail() {
                     <button className="btn-favorite">♡</button>
                     <h1 className="product-title">{product.name}</h1>
                     <p className="product-desc">{product.description}</p>
-                    
+
                     <div className="product-colors">
                         <button className="color-btn silver"></button>
                         <button className="color-btn rose-gold"></button>
@@ -144,7 +144,7 @@ export function ProductDetail() {
             </div>
 
             <div className="product-actions-extra">
-                 <button className="product-detail_back" onClick={() => navigate('/')}>Volver al catálogo</button>
+                <button className="product-detail_back" onClick={() => navigate('/')}>Volver al catálogo</button>
             </div>
 
             <div className="reviews-section">
