@@ -23,7 +23,7 @@ import { Wishlist } from './components/Wishlist'
 import { Committee } from './components/ComiteEmpresa'
 import { Acuerdos } from './components/Acuerdos'
 import { PermisosVacaciones } from './components/PermisosVacaciones'
-
+import { Personalization } from './components/Personalization'
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <UserProvider>
@@ -37,7 +37,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/cart" element={<ShoppingCart />} />
         <Route path="/catalogue" element={<Catalogue />} />
         <Route path="/wishlist" element={<Wishlist />} />
-
+        <Route path="/personalization" element={<Personalization />} />
         <Route
           path="/checkout"
           element={

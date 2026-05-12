@@ -119,7 +119,7 @@ export function Header() {
             <ul className="nav-links">
                 <li><a href="/">Home</a></li>
                 <li><a href="/catalogue">Catalogue</a></li>
-                <li><a href="#personalizacion">Personalization</a></li>
+                <li><Link to="/personalization">Personalization</Link></li>
                 <li><Link to="/intranet">Private Zone</Link></li>
                 <li className="favorites"><a href="/wishlist"><img src={favoritosIcon} alt="Favoritos" className="favorites-icon"/></a></li>
             </ul>  

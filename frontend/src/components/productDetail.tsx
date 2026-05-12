@@ -15,6 +15,7 @@ export function ProductDetail() {
     const navigate = useNavigate();
     const [cart, setCart] = useState<CartItem[]>([]);
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [selectedColor, setSelectedColor] = useState<"silver" | "rose-gold" | "gold">("gold");
 
     const addToCartFromDetail = (product: Product): void => {
         const saved = sessionStorage.getItem("cart");
@@ -128,9 +129,21 @@ export function ProductDetail() {
                     <p className="product-desc">{product.description}</p>
 
                     <div className="product-colors">
-                        <button className="color-btn silver"></button>
-                        <button className="color-btn rose-gold"></button>
-                        <button className="color-btn gold selected"></button>
+                        <button 
+                            className={`color-btn silver ${selectedColor === "silver" ? "selected" : ""}`}
+                            onClick={() => setSelectedColor("silver")}
+                            title="Plata"
+                        ></button>
+                        <button 
+                            className={`color-btn rose-gold ${selectedColor === "rose-gold" ? "selected" : ""}`}
+                            onClick={() => setSelectedColor("rose-gold")}
+                            title="Oro Rosado"
+                        ></button>
+                        <button 
+                            className={`color-btn gold ${selectedColor === "gold" ? "selected" : ""}`}
+                            onClick={() => setSelectedColor("gold")}
+                            title="Oro"
+                        ></button>
                     </div>
 
                     <div className="product-bottom-row">
