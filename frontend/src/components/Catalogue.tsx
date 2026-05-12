@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import type { Product, CartItem } from '../types'
 import { ProductCard } from './productCard'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from './UserContext';
 import { productosAPI, authAPI } from '../services/apiService';
 
@@ -20,6 +20,10 @@ function App() {
   const [newCollection, setNewCollection] = useState("");
   const [newStock, setNewStock] = useState("");
   const [newImageUrl, setNewImageUrl] = useState("")
+
+  const [searchParams] = useSearchParams();
+  const filterText = searchParams.get('search') || "";
+  const [filterCategory, setFilterCategory] = useState("");
 
   const { customer, setCustomer, loading, setLoading } = useUser();
 
@@ -119,6 +123,13 @@ function App() {
 
   if (loading) return <div>Cargando...</div>;
 
+  const categories = Array.from(new Set(products.map(p => p.category)));
+  const filteredProducts = products.filter(p => {
+    const matchesText = p.name.toLowerCase().includes(filterText.toLowerCase()) || p.description.toLowerCase().includes(filterText.toLowerCase());
+    const matchesCategory = filterCategory ? p.category === filterCategory : true;
+    return matchesText && matchesCategory;
+  });
+
   return (
     <>
 
@@ -157,8 +168,28 @@ function App() {
         </div>
       )}
 
+      <div className="catalogue-filters">
+        {filterText && (
+          <div className="search-results-msg">
+            Resultados de búsqueda para: <strong>{filterText}</strong>
+          </div>
+        )}
+        <div className="filter-select-wrapper" style={{ marginLeft: filterText ? 'auto' : '0' }}>
+          <select 
+            className="filter-select"
+            value={filterCategory} 
+            onChange={(e) => setFilterCategory(e.target.value)}
+          >
+            <option value="">Todas las colecciones</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className="products-grid">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div key={product.id} className="product-item-wrapper">
             <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
 
