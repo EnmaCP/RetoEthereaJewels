@@ -685,12 +685,12 @@ app.post("/api/products/:id/reviews", async (req, res) => {
 app.post("/api/auth/register", async (req: Request, res: Response) => {
   const { nombre_usuario, password, email } = req.body;
   if (!nombre_usuario || !password || !email) {
-    return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    return res.status(400).json({ error: "Todos los campos son obligatorios" });
   }
   const passwordHash = await bcrypt.hash(password, 10);
   const existingUser = await pool.query('SELECT * FROM usuario WHERE nombre_usuario = $1 OR email = $2', [nombre_usuario, email]);
   if (existingUser.rows.length > 0) {
-    return res.status(400).json({ message: "El usuario ya existe" });
+    return res.status(400).json({ error: "El usuario ya existe" });
   }
   const result = await pool.query(
     'INSERT INTO usuario (nombre_usuario, email, password_hash) VALUES ($1, $2, $3) RETURNING id, nombre_usuario, email, rol',
@@ -703,7 +703,7 @@ app.post("/api/auth/login", async (req: Request, res: Response) => {
   const { identifier, password } = req.body;
 
   if (!identifier || !password) {
-    return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    return res.status(400).json({ error: "Todos los campos son obligatorios" });
   }
   const userResult = await pool.query(
     'SELECT * FROM usuario WHERE nombre_usuario = $1 OR email = $1',
@@ -711,14 +711,14 @@ app.post("/api/auth/login", async (req: Request, res: Response) => {
   );
 
   if (userResult.rows.length === 0) {
-    return res.status(404).json({ message: "Credenciales incorrectas" });
+    return res.status(404).json({ error: "Credenciales incorrectas" });
   }
 
   const user = userResult.rows[0];
   const valid = await bcrypt.compare(password, user.password_hash);
 
   if (!valid) {
-    return res.status(404).json({ message: "Credenciales inválidas" });
+    return res.status(401).json({ error: "Credenciales inválidas" });
   }
 
   // Frontend context and decoding expects 'username' and 'role' in token payload, 

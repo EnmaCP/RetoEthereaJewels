@@ -1,0 +1,118 @@
+.site-footer {
+  background-color: #cba97c;
+  color: #ffffff;
+  padding: 4rem 2rem 1rem;
+  font-family: 'Times New Roman', Times, serif;
+  margin-top: 4rem;
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-title {
+  font-size: 2rem;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  font-family: 'Times New Roman', Times, serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.footer-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #ffffff;
+  opacity: 0.95;
+}
+
+.footer-subtitle {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.footer-subtitle::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 40px;
+  height: 2px;
+  background-color: #ffffff;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.footer-links li a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-links li a:hover {
+  color: #4a3832;
+  transform: translateX(5px);
+}
+
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.social-icon {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  color: #4a3832;
+  transform: translateX(5px);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+  color: #ffffff;
+  opacity: 0.9;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 3rem 1.5rem 1rem;
+  }
+  
+  .footer-container {
+    gap: 2rem;
+  }
+}

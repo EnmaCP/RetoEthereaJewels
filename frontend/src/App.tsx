@@ -75,7 +75,7 @@ function App() {
       setNewStock("");
       setNewDescription("");
       setNewImageUrl("");
-      loadProducts();
+      loadData();
     } catch (error) {
       console.error("Error:", error);
       alert("Error al crear el producto");
@@ -94,14 +94,14 @@ function App() {
     // We update it through the API just in case it is supported
     try {
       await productosAPI.update(id, { stock: newStock });
-      loadProducts();
+      loadData();
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   const handleDelete = async (id: number): Promise<void> => {
-    if (!window.confirm("¿Seguro que quieres borrar este producto?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
     
     setProducts(prevProducts => prevProducts.filter(p => p.id !== id));
 
@@ -109,7 +109,7 @@ function App() {
       await productosAPI.delete(id);
     } catch (error) {
       console.error("Error:", error);
-      loadProducts(); // revert optimistically deleted item
+      loadData(); // revert optimistically deleted item
     }
   };
 
@@ -126,9 +126,10 @@ function App() {
 
   useEffect(() =>{
     sessionStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated"));
   }, [cart]);
 
-  if (loading) return <div>Cargando...</div>;
+  if (loading) return <div>Loading...</div>;
 
   return (
     <>
@@ -159,7 +160,7 @@ function App() {
 
       {/* Featured Carousel */}
       <section className="featured-carousel-section">
-        <h2 className="section-title">Destacados</h2>
+        <h2 className="section-title">Our necklaces</h2>
         <div className="carousel-container">
           <div className="carousel-track" style={{ transform: `translateX(-${carouselIndex * 100}%)` }}>
             {featuredProducts.map((p) => (
@@ -179,7 +180,7 @@ function App() {
 
       {/* Categories Section */}
       <section className="categories-section">
-        <h2 className="section-title">Categorías</h2>
+        <h2 className="section-title">Collections</h2>
         <div className="categories-grid">
           {collections.map((c) => (
             <div 
@@ -236,7 +237,7 @@ function App() {
           )}
 
       <section className="all-products-section">
-        <h2 className="section-title">Nuestra Colección</h2>
+        <h2 className="section-title">All necklaces</h2>
         <div className="products-grid">
             {products.map((product) => (
               <div key={product.id} className="product-item-wrapper">
@@ -252,6 +253,13 @@ function App() {
                     <button className='editarStock' title="Editar stock"
                       onClick={() => handleUpdateStock(product.id, product.stock)}>
                       ✏️
+                    </button>
+                  )}
+
+                  {customer?.role === "admin" && (
+                    <button className='editarStock' title="Editar producto"
+                      onClick={() => navigate(`/admin/products/${product.id}/edit`)}>
+                      ⚙️
                     </button>
                   )}
 

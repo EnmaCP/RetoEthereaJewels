@@ -268,8 +268,33 @@
 @media (max-width: 768px) {
   .product-detail-card {
     flex-direction: column;
+    padding: 1.5rem;
+    gap: 1.5rem;
   }
   .product-image-box {
     flex: 0 0 auto;
+    width: 100%;
+  }
+  .product-details-box {
+    padding-right: 0;
+  }
+  .product-title {
+    font-size: 2rem;
+  }
+  .product-bottom-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .price-cart-col {
+    align-items: center;
+    width: 100%;
+  }
+  .btn-personalize {
+    width: 100%;
+    text-align: center;
+  }
+  .btn-add-cart {
+    width: 100%;
   }
 }

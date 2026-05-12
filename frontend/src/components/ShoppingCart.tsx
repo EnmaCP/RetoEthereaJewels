@@ -48,6 +48,7 @@ function ShoppingCart() {
   // Guardar carrito local en sessionStorage
   useEffect(() => {
     sessionStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated"));
   }, [cart]);
 
   // Actualizar cantidad (carrito local)

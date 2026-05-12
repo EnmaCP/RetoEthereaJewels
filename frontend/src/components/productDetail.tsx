@@ -35,6 +35,8 @@ export function ProductDetail() {
         sessionStorage.setItem("cart", JSON.stringify(currentCart));
         // Actualizar el estado local para mantener coherencia en este componente
         setCart(currentCart);
+        // Avisar a otros componentes (ej. Header) que el carrito ha sido actualizado
+        window.dispatchEvent(new Event("cartUpdated"));
 
         alert("¡Producto añadido al carrito correctamente!");
     };

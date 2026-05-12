@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { type CartItem } from "../types";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import logoPrincipal from "./imagen/LogoPrincipal.png";
@@ -21,9 +21,26 @@ export function Header() {
         return null;
     }
 
-    const rawCart = sessionStorage.getItem("cart");
-    const cart: CartItem[] = rawCart ? JSON.parse(rawCart) : [];
-    const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const [cartCount, setCartCount] = useState(0);
+
+    useEffect(() => {
+        const updateCartCount = () => {
+            const rawCart = sessionStorage.getItem("cart");
+            const cart: CartItem[] = rawCart ? JSON.parse(rawCart) : [];
+            const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+            setCartCount(count);
+        };
+
+        // Initialize cart count
+        updateCartCount();
+
+        // Listen for custom event from other components
+        window.addEventListener("cartUpdated", updateCartCount);
+        
+        return () => {
+            window.removeEventListener("cartUpdated", updateCartCount);
+        };
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -87,7 +104,12 @@ export function Header() {
                     <button type="submit" className="search-btn"><img src={searchIcon} alt="Lupa" className="search-icon" /></button>
                 </form>
                 <div className="header-icons">
-                    <button className="icon-btn"><Link to={customer ? "/cart" : "/login"}><img src={shoppingCart} alt="Carrito" className="cart-icon" /></Link></button>
+                    <button className="icon-btn cart-btn-wrapper">
+                        <Link to={customer ? "/cart" : "/login"}>
+                            <img src={shoppingCart} alt="Carrito" className="cart-icon" />
+                            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                        </Link>
+                    </button>
                     
                     <div className="user-menu-container">
                         <button className="icon-btn" onClick={handleUserIconClick}>

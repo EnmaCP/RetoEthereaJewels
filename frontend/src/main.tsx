@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import App from './App'
 import Header from './components/header'
+import Footer from './components/Footer'
 import { ProductDetail } from './components/productDetail'
 import { NotFound } from './components/NotFound'
 import { CheckoutPage } from './components/CheckoutPage'
@@ -96,6 +97,7 @@ createRoot(document.getElementById('root')!).render(
           }
         />
       </Routes>
+      <Footer />
     </UserProvider>
   </BrowserRouter>
 )

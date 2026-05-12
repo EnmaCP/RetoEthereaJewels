@@ -119,6 +119,7 @@ function App() {
 
   useEffect(() => {
     sessionStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated"));
   }, [cart]);
 
   if (loading) return <div>Cargando...</div>;

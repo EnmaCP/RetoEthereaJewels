@@ -205,3 +205,29 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .cart-page-container {
+    flex-direction: column;
+  }
+  .cart-item-card {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .cart-item-image-wrapper {
+    flex: 0 0 200px;
+    height: 200px;
+  }
+  .cart-item-details {
+    padding: 15px;
+  }
+  .cart-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .cart-item-actions {
+    margin-top: 15px;
+    justify-content: flex-start;
+  }
+}
