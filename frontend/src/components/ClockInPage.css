@@ -1,0 +1,116 @@
+.clock-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Times New Roman', Times, serif;
+    color: #4a3832;
+    text-align: center;
+}
+
+.clock-card {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    box-shadow: 0 10px 30px rgba(203, 169, 124, 0.15);
+    border: 1px solid rgba(203, 169, 124, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.digital-clock {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #cba97c;
+    letter-spacing: 4px;
+    text-shadow: 0 2px 5px rgba(203, 169, 124, 0.2);
+    margin-bottom: 1rem;
+    background: #fdfbfb;
+    padding: 1rem 3rem;
+    border-radius: 16px;
+    border: 1px solid rgba(203, 169, 124, 0.3);
+}
+
+.clock-status {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #8c736d;
+}
+
+.clock-message-success {
+    background: #f3e2e2;
+    color: #4a3832;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #cba97c;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+.clock-form-group {
+    width: 100%;
+    max-width: 500px;
+    text-align: left;
+    margin: 0 auto;
+}
+
+.clock-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4a3832;
+    font-weight: 600;
+}
+
+.clock-textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(203, 169, 124, 0.4);
+    border-radius: 8px;
+    background: #fdfbfb;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.clock-textarea:focus {
+    outline: none;
+    border-color: #cba97c;
+    box-shadow: 0 0 0 3px rgba(203, 169, 124, 0.2);
+    background: white;
+}
+
+.btn-clock {
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(203, 169, 124, 0.2);
+}
+
+.btn-clock-in {
+    background: #cba97c;
+    color: white;
+}
+
+.btn-clock-in:hover {
+    background: #ba8e52;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(203, 169, 124, 0.4);
+}
+
+.btn-clock-out {
+    background: white;
+    color: #4a3832;
+    border: 2px solid #cba97c;
+}
+
+.btn-clock-out:hover {
+    background: #f3e2e2;
+    transform: translateY(-3px);
+}

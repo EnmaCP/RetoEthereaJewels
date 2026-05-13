@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Fleur+De+Leah&family=Lavishly+Yours&family=Tangerine:wght@400;700&display=swap');
 
 .tangerine-regular {
-  font-family: "Tangerine", cursive;
+  font-family: 'Times New Roman', Times, serif;
   font-weight: 400;
   font-style: normal;
 }
 
 .tangerine-bold {
-  font-family: "Tangerine", cursive;
+  font-family: 'Times New Roman', Times, serif;
   font-weight: 700;
   font-style: normal;
 }
@@ -147,7 +147,7 @@ body {
   font-weight: bold;
   min-width: 20px;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .user-icon {
@@ -163,9 +163,9 @@ body {
 
 .navbar {
   background-color: #cba97c;
-  padding: 10px 40px;
+  padding: 12px 40px;
   width: 100%;
-  font: 1em tan;
+  box-shadow: 0 4px 12px rgba(74, 56, 50, 0.08);
 }
 
 .nav-links {
@@ -173,7 +173,7 @@ body {
   display: flex;
   margin: 0 auto;
   padding: 0;
-  gap: 30px;
+  gap: 40px;
   align-items: center;
   max-width: 1400px;
 }
@@ -182,13 +182,32 @@ body {
 .nav-links li a:visited {
   text-decoration: none;
   color: white;
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 2px;
+  position: relative;
+  padding-bottom: 5px;
   transition: color 0.3s ease;
+}
+
+.nav-links li a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #4a3832;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
 }
 
 .nav-links li a:hover {
   color: #4a3832;
+}
+
+.nav-links li a:hover::after {
+  width: 100%;
 }
 
 .nav-links li.favorites {
@@ -378,7 +397,7 @@ body {
 .form-group label {
   font-weight: 600;
   font-size: 0.75rem;
-  color: #666;
+  color: #4a3832;
   text-transform: uppercase;
   margin-bottom: 0.4rem;
   padding-left: 0.2rem;
@@ -387,7 +406,7 @@ body {
 
 .form-group input {
   padding: 0.6rem 0.8rem;
-  border: 1px solid #ddd;
+  border: 1px solid #cba97c;
   border-radius: 6px;
   font-size: 0.9rem;
   transition: all 0.2s;
@@ -523,7 +542,7 @@ body {
 .carrito-container {
   margin-top: 2rem;
   padding: 1rem;
-  background-color: #f9f9f9;
+  background-color: #f9f5ee;
   border-radius: 8px;
 }
 
@@ -576,7 +595,7 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #333;
+  color: #4a3832;
   margin-bottom: 40px;
   position: relative;
 }
@@ -584,7 +603,7 @@ body {
 .hero-content h1 {
   font-size: 3rem;
   margin-bottom: 10px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .hero-content p {
@@ -608,7 +627,7 @@ body {
   top: 100%;
   right: 0;
   background-color: #f7ebeb;
-  border: 1px solid #ccc;
+  border: 1px solid #cba97c;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -621,7 +640,7 @@ body {
   margin: 0 0 15px 0;
   color: #4a3832;
   font-weight: bold;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #cba97c;
   padding-bottom: 10px;
 }
 
@@ -689,11 +708,12 @@ body {
 
 .carousel-container {
   position: relative;
-  max-width: 1000px;
+  max-width: 700px;
   margin: 0 auto;
   overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(74, 56, 50, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(74, 56, 50, 0.08);
+  background-color: white;
 }
 
 .carousel-track {
@@ -705,52 +725,62 @@ body {
   min-width: 100%;
   position: relative;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
 .carousel-slide img {
   width: 100%;
-  height: 500px;
+  height: 400px;
   object-fit: cover;
   display: block;
 }
 
 .carousel-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(74, 56, 50, 0.8));
-  color: white;
-  padding: 2rem;
+  background: white;
+  color: #4a3832;
+  padding: 1.5rem 2rem;
   text-align: center;
+  border-top: 1px solid rgba(203, 169, 124, 0.2);
 }
 
 .carousel-info h3 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  margin-bottom: 0.2rem;
   font-family: 'Times New Roman', Times, serif;
+  color: #4a3832;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.carousel-info p {
+  font-size: 1.2rem;
+  color: #cba97c;
+  font-weight: normal;
 }
 
 .carousel-btn {
   position: absolute;
-  top: 50%;
+  top: 200px;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.8);
-  border: none;
-  width: 50px;
-  height: 50px;
+  background: white;
+  border: 1px solid rgba(203, 169, 124, 0.3);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  font-size: 1.5rem;
-  color: #cba97c;
+  font-size: 1.2rem;
+  color: #4a3832;
   cursor: pointer;
   transition: all 0.3s;
   z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .carousel-btn:hover {
-  background: white;
-  color: #4a3832;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  background: #fdfbfb;
+  color: #cba97c;
+  border-color: #cba97c;
 }
 
 .carousel-btn.prev {
@@ -864,7 +894,8 @@ body {
   min-width: 200px;
 }
 
-.filter-select:hover, .filter-select:focus {
+.filter-select:hover,
+.filter-select:focus {
   border-color: #ba8e52;
   box-shadow: 0 0 0 3px rgba(203, 169, 124, 0.2);
 }
@@ -876,19 +907,19 @@ body {
     padding: 15px 20px;
     gap: 15px;
   }
-  
+
   .header-right {
     width: 100%;
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  
+
   .search-bar {
     order: 2;
     min-width: 100%;
     margin-top: 10px;
   }
-  
+
   .header-icons {
     order: 1;
     margin-left: auto;
@@ -907,19 +938,19 @@ body {
   .hero-content h1 {
     font-size: 2rem;
   }
-  
+
   .hero-content p {
     font-size: 1rem;
   }
-  
+
   .carousel-slide img {
     height: 300px;
   }
-  
+
   .carousel-info h3 {
     font-size: 1.5rem;
   }
-  
+
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     padding: 1rem;
@@ -929,16 +960,16 @@ body {
   .categories-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .topbar-form {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .form-group.btn-group {
     margin-top: 10px;
   }
-  
+
   .section-title {
     font-size: 2rem;
   }
@@ -948,11 +979,11 @@ body {
   .products-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .carousel-slide img {
     height: 250px;
   }
-  
+
   .logo img {
     transform: scale(1.1);
   }

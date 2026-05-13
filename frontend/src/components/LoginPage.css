@@ -2,7 +2,7 @@
   max-width: 400px;
   margin: 4rem auto;
   padding: 2rem;
-  background-color: #f0d9d9;
+  background-color: #f3e2e2;
   border-radius: 25px;
   box-shadow: 0 4px 6px #0000001a;
   border: 1px solid #ba8e52;
@@ -34,14 +34,14 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #333;
+  color: #4a3832;
 }
 
 .login-input {
   width: 100%;
   padding: 0.75rem;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid #cba97c;
   box-sizing: border-box;
 }
 

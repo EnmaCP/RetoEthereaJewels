@@ -5,7 +5,7 @@
     min-height: calc(100vh - 100px);
     padding: 3rem 2rem;
     background-color: #fcfcfc;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .edit-product-card {
@@ -99,7 +99,7 @@
 }
 
 .submit-button:hover {
-    background-color: #333333;
+    background-color: #4a3832333;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

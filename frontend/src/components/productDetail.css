@@ -370,7 +370,7 @@
   padding: 1rem;
   border: 1px solid rgba(203, 169, 124, 0.4);
   border-radius: 8px;
-  font-family: inherit;
+  font-family: 'Times New Roman', Times, serif;
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.8);
   transition: all 0.3s ease;

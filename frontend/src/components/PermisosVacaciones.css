@@ -1,18 +1,20 @@
 .permisos-vacaciones-container {
-    padding: 2rem;
+    padding: 1rem;
     max-width: 1200px;
     margin: 0 auto;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #2d3436;
+    font-family: 'Times New Roman', Times, serif;
+    color: #4a3832;
 }
 
 .pv-title {
     font-size: 2.5rem;
-    font-weight: 800;
+    font-weight: 400;
     margin-bottom: 2rem;
-    color: #1a1a1a;
+    color: #cba97c;
     position: relative;
     padding-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .pv-title::after {
@@ -21,8 +23,8 @@
     bottom: 0;
     left: 0;
     width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, #d4af37, #f1c40f);
+    height: 2px;
+    background-color: #cba97c;
     border-radius: 2px;
 }
 
@@ -38,7 +40,8 @@
 .normativa-section h2 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-    color: #2c3e50;
+    color: #4a3832;
+    font-weight: 400;
 }
 
 .vacaciones-header {
@@ -46,15 +49,18 @@
     align-items: center;
     gap: 1rem;
     margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(203, 169, 124, 0.2);
+    padding-bottom: 1rem;
 }
 
 .badge {
-    background: #e1f5fe;
-    color: #0288d1;
+    background: #f3e2e2;
+    color: #cba97c;
     padding: 0.4rem 1rem;
     border-radius: 20px;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: bold;
+    border: 1px solid rgba(203, 169, 124, 0.3);
 }
 
 .vacaciones-card {
@@ -64,18 +70,18 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(203, 169, 124, 0.1);
+    border: 1px solid rgba(203, 169, 124, 0.2);
 }
 
 .info-item h3 {
     font-size: 1.2rem;
     margin-bottom: 0.8rem;
-    color: #1a1a1a;
+    color: #cba97c;
 }
 
 .info-item p {
-    color: #636e72;
+    color: #8c736d;
     line-height: 1.6;
     margin-bottom: 1.5rem;
 }
@@ -84,27 +90,30 @@
     padding: 0.8rem 1.5rem;
     border-radius: 8px;
     border: none;
-    background: #2d3436;
+    background: #cba97c;
     color: white;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(203, 169, 124, 0.3);
 }
 
 .pv-btn:hover {
-    background: #d4af37;
+    background: #ba8e52;
     transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(203, 169, 124, 0.4);
 }
 
 .pv-btn.secondary {
     background: transparent;
-    border: 2px solid #2d3436;
-    color: #2d3436;
+    border: 1px solid #cba97c;
+    color: #cba97c;
+    box-shadow: none;
 }
 
 .pv-btn.secondary:hover {
-    background: #2d3436;
-    color: white;
+    background: #f3e2e2;
+    color: #cba97c;
 }
 
 /* Permisos Section */
@@ -115,16 +124,19 @@
 }
 
 .permiso-card {
-    background: white;
+    background: #fdfbfb;
     padding: 1.5rem;
     border-radius: 12px;
-    border-left: 5px solid #d4af37;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    transition: transform 0.3s ease;
+    border: 1px solid rgba(203, 169, 124, 0.15);
+    border-left: 5px solid #cba97c;
+    box-shadow: 0 4px 15px rgba(203, 169, 124, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .permiso-card:hover {
-    transform: translateX(5px);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(203, 169, 124, 0.15);
+    background: white;
 }
 
 .permiso-header {
@@ -138,19 +150,23 @@
 .permiso-header h3 {
     font-size: 1.1rem;
     margin: 0;
-    color: #2c3e50;
+    color: #4a3832;
+    font-weight: 600;
 }
 
 .permiso-days {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #d4af37;
+    color: #cba97c;
     white-space: nowrap;
+    background: #f3e2e2;
+    padding: 4px 8px;
+    border-radius: 6px;
 }
 
 .permiso-card p {
     font-size: 0.95rem;
-    color: #636e72;
+    color: #8c736d;
     line-height: 1.5;
     margin: 0;
 }
@@ -166,31 +182,35 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    background: #f8f9fa;
+    background: #fdfbfb;
     padding: 1.5rem;
     border-radius: 12px;
+    border: 1px solid rgba(203, 169, 124, 0.15);
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .normativa-card:hover {
     background: white;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(203, 169, 124, 0.15);
+    transform: translateY(-3px);
 }
 
 .normativa-card .icon {
     font-size: 2rem;
+    color: #cba97c;
 }
 
 .normativa-info h4 {
     margin: 0 0 0.5rem 0;
-    color: #1a1a1a;
+    color: #4a3832;
+    font-weight: 600;
 }
 
 .normativa-info p {
     margin: 0;
     font-size: 0.9rem;
-    color: #636e72;
+    color: #8c736d;
 }
 
 @media (max-width: 768px) {

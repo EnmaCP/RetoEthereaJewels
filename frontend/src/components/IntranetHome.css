@@ -1,0 +1,239 @@
+.intranet-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: 'Times New Roman', Times, serif;
+  min-height: 100vh;
+}
+
+/* Grid Layout */
+.intranet-grid-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.intranet-grid-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .intranet-grid-top,
+  .intranet-grid-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cards */
+.luxury-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 10px 30px rgba(203, 169, 124, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(203, 169, 124, 0.2);
+}
+
+.luxury-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(203, 169, 124, 0.3);
+}
+
+.card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+  transition: transform 0.7s ease;
+}
+
+.luxury-card:hover .card-bg {
+  transform: scale(1.05);
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(252, 249, 249, 0.2), rgba(74, 56, 50, 0.8));
+  z-index: 2;
+}
+
+.card-content {
+  position: relative;
+  z-index: 3;
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: white;
+}
+
+.card-content h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.card-content p {
+  font-size: 1rem;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Specific Cards */
+.card-comite {
+  min-height: 400px;
+}
+
+.card-comite .card-overlay {
+  background: linear-gradient(to bottom, rgba(243, 226, 226, 0.3), rgba(203, 169, 124, 0.85));
+}
+
+.card-stacked {
+  min-height: 190px;
+}
+
+.card-stacked .card-overlay {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(140, 115, 109, 0.8));
+}
+
+.right-stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Bottom Sections */
+.bottom-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(203, 169, 124, 0.1);
+  border: 1px solid rgba(203, 169, 124, 0.2);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  color: #cba97c;
+  border-bottom: 1px solid rgba(203, 169, 124, 0.2);
+  padding-bottom: 1rem;
+}
+
+.section-header h3 {
+  font-size: 1.5rem;
+  color: #4a3832;
+  font-weight: 400;
+}
+
+/* Calendar */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  text-align: center;
+}
+
+.calendar-day-header {
+  font-weight: bold;
+  color: #cba97c;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+.calendar-day {
+  padding: 15px 10px;
+  background: #fdfbfb;
+  border-radius: 8px;
+  color: #4a3832;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.calendar-day:hover {
+  background: #f3e2e2;
+  border-color: #cba97c;
+}
+
+.calendar-day.active {
+  background: #cba97c;
+  color: white;
+}
+
+/* News */
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.news-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #fdfbfb;
+  border-radius: 12px;
+  border: 1px solid rgba(203, 169, 124, 0.15);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.news-item:hover {
+  background: white;
+  box-shadow: 0 5px 15px rgba(203, 169, 124, 0.2);
+  transform: translateX(5px);
+}
+
+.news-date {
+  background: #f3e2e2;
+  color: #cba97c;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.news-date span:first-child {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.news-date span:last-child {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.news-content h4 {
+  color: #4a3832;
+  margin-bottom: 0.3rem;
+  font-size: 1.1rem;
+}
+
+.news-content p {
+  color: #8c736d;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}

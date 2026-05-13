@@ -2,7 +2,7 @@
   max-width: 400px;
   margin: 4rem auto;
   padding: 2rem;
-  background-color:#f0d9d9;
+  background-color: #f3e2e2;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   border: 1px solid #ba8e52;
@@ -51,7 +51,7 @@
   width: 100%;
   padding: 0.75rem;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid #cba97c;
   box-sizing: border-box;
 }
 

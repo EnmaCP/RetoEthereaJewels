@@ -24,26 +24,39 @@ export default function IntranetLayout() {
                         </div>
                     </div>
                 </div>
-            <nav className="intranet-nav">
-                <NavLink to="/intranet" end>
-                    Bienvenida
-                </NavLink>
-                <NavLink to="/intranet/fichajes">
-                    Fichajes
-                </NavLink>
-                
-                <NavLink to="/">
-                    Tienda Etherea
-                </NavLink>
-                <NavLink to="/intranet/comite-empresa">
-                    Comite de Empresa
-                </NavLink>
-                <NavLink to="/intranet/acuerdos">
-                    Acuerdos/Convenios
-                </NavLink>
-                <NavLink to="/intranet/permisos-vacaciones">
-                    Permisos y Vacaciones
-                </NavLink>
+            <nav className="navbar">
+                <ul className="nav-links">
+                    <li>
+                        <NavLink to="/intranet" end>
+                            Bienvenida
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/intranet/fichajes">
+                            Fichajes
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/intranet/comite-empresa">
+                            Comite de Empresa
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/intranet/acuerdos">
+                            Acuerdos/Convenios
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/intranet/permisos-vacaciones">
+                            Permisos y Vacaciones
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/">
+                            Volver a Tienda
+                        </NavLink>
+                    </li>
+                </ul>
             </nav>
             </header>
             <main className="intranet-main">

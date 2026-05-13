@@ -3,11 +3,10 @@ import { useUser } from "./UserContext"; // Importamos tu contexto de usuario
 import "./OrderHistory.css";
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "orange",
-  processing: "blue",
-  shipped: "purple",
-  delivered: "green",
-  cancelled: "red",
+  PENDIENTE: "orange",
+  PAGADO: "blue",
+  ENTREGADO: "green",
+  CANCELADO: "red",
 };
 
 interface Order {

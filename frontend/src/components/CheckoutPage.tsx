@@ -68,7 +68,7 @@ export function CheckoutPage() {
 
     return (
         <div className="checkout-wrapper">
-            <h1>Finalizar Compra</h1>
+            <h1 className="section-title">Finalizar Compra</h1>
 
             <div className="checkout-container">
                 <div className="cart-section">

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './ComiteEmpresa.css';
+import videoPresentation from './imagen/videopresentation.mp4';
 
 
 const logros = [
@@ -30,20 +32,38 @@ export function Committee() {
             {/* Título principal que abarca todo */}
             <h1 className="comite-title">Comité de empresa</h1>
 
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', marginBottom: '3rem', alignItems: 'center' }}>
+                <section className="quienes-somos" style={{ flex: '1 1 400px', margin: 0 }}>
+                    <h2>¿Quiénes somos?</h2>
+                    <p>
+                        Somos un equipo de compañeros y compañeras elegidos para representarte. Piensa en nosotros como tu
+                        &quot;delegado de clase&quot;: nuestra misión es ser tu voz ante la dirección, velar por
+                        nuestros derechos laborales, resolver tus dudas del día a día y proponer
+                        mejoras para que trabajar aquí sea cada vez mejor. Básicamente, estamos en tu mismo barco
+                        y estamos aquí para ayudarte.<br></br> ¡No dudes en contactar con nosotros!
+                    </p>
+                </section>
+
+                <section className="bienvenida-video" style={{ flex: '1 1 400px', margin: 0 }}>
+                    <div style={{ borderRadius: '16px', overflow: 'hidden', boxShadow: '0 15px 40px rgba(203, 169, 124, 0.2)' }}>
+                        <video 
+                            autoPlay 
+                            loop 
+                            muted 
+                            playsInline 
+                            controls
+                            style={{ width: '100%', display: 'block', maxHeight: '350px', objectFit: 'cover' }}
+                        >
+                            <source src={videoPresentation} type="video/mp4" />
+                            Tu navegador no soporta el formato de video.
+                        </video>
+                    </div>
+                </section>
+            </div>
+
             <div className="comite-content">
                 {/* COLUMNA IZQUIERDA */}
                 <div className="left-column">
-
-                    <section className="quienes-somos">
-                        <h2>¿Quiénes somos?</h2>
-                        <p>
-                            Somos un equipo de compañeros y compañeras elegidos para representarte. Piensa en nosotros como tu
-                            &quot;delegado de clase&quot;: nuestra misión es ser tu voz ante la dirección, velar por
-                            nuestros derechos laborales, resolver tus dudas del día a día y proponer
-                            mejoras para que trabajar aquí sea cada vez mejor. Básicamente, estamos en tu mismo barco
-                            y estamos aquí para ayudarte.<br></br> ¡No dudes en contactar con nosotros!
-                        </p>
-                    </section>
 
                     <section className="nuestros-logros">
                         <h2>Nuestros logros</h2>
@@ -114,6 +134,16 @@ export function Committee() {
                             </div>
                         ))}
                     </div>
+
+                    <section className="enlaces-interes" style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <h2>Enlaces de Interés</h2>
+                        <Link to="/intranet/acuerdos" className="btn-intranet" style={{ textAlign: 'center', display: 'block', width: '100%', padding: '1rem', fontSize: '1.1rem' }}>
+                            📄 Ver Acuerdos
+                        </Link>
+                        <Link to="/intranet/permisos-vacaciones" className="btn-intranet" style={{ textAlign: 'center', display: 'block', width: '100%', padding: '1rem', fontSize: '1.1rem' }}>
+                            ✈️ Permisos y Vacaciones
+                        </Link>
+                    </section>
                 </div>
             </div>
         </div>

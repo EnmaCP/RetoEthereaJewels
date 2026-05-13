@@ -57,11 +57,11 @@
 
 .intranet-welcome-text {
   font-size: 1.1rem;
-  color: #555;
+  color: #4a3832;
 }
 
 .intranet-text {
-  color: #555;
+  color: #4a3832;
 }
 
 .btn-intranet {
@@ -99,7 +99,7 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #333;
+  color: #4a3832;
 }
 
 .clock-textarea {
@@ -107,8 +107,8 @@
   max-width: 500px;
   padding: 0.75rem;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  font-family: inherit;
+  border: 1px solid #cba97c;
+  font-family: 'Times New Roman', Times, serif;
   font-size: 0.95rem;
 }
 
@@ -147,7 +147,7 @@
 
 .admin-title {
   margin-bottom: 1.5rem;
-  color: #333;
+  color: #4a3832;
 }
 
 .admin-table-wrapper {
@@ -190,7 +190,7 @@
 }
 
 .admin-email-cell {
-  color: #666;
+  color: #4a3832;
 }
 
 .admin-select-role {

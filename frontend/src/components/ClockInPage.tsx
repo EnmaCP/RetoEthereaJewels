@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './IntranetLayout.css';
+import './ClockInPage.css';
 import { useUser } from './UserContext';
 import { fichagesAPI } from '../services/apiService';
 
@@ -10,6 +10,12 @@ export default function ClockInPage() {
     const [note, setNote] = useState('');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(true);
+    const [time, setTime] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setTime(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         const checkStatus = async () => {
@@ -49,37 +55,46 @@ export default function ClockInPage() {
         }
     };
 
-    if (loading) return <p className="intranet-text">Cargando estado del fichaje...</p>;
+    if (loading) return <p style={{ textAlign: 'center', marginTop: '2rem', color: '#8c736d' }}>Cargando estado del fichaje...</p>;
 
     return (
-        <div>
-            <h2 className="intranet-page-title">Registro de Fichajes</h2>
+        <div className="clock-container">
+            <h1 className="pv-title" style={{ textAlign: 'center' }}>Registro de Jornada</h1>
             
-            {message && (
-                <div className="clock-message-success">
-                    {message}
+            <div className="clock-card">
+                <div className="digital-clock">
+                    {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </div>
-            )}
+                <div className="clock-status">
+                    Estado actual: <strong>{isClockedIn ? 'Trabajando' : 'Fuera de turno'}</strong>
+                </div>
 
-            <div className="clock-form-group">
-                <label className="clock-label">
-                    Incidencia (opcional):
-                </label>
-                <textarea 
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    rows={4}
-                    className="clock-textarea"
-                    placeholder="Escribe aquí si has llegado tarde, si hay algún problema, etc."
-                />
+                {message && (
+                    <div className="clock-message-success">
+                        {message}
+                    </div>
+                )}
+
+                <div className="clock-form-group">
+                    <label className="clock-label">
+                        Incidencia (opcional):
+                    </label>
+                    <textarea 
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        rows={3}
+                        className="clock-textarea"
+                        placeholder="Escribe aquí si has llegado tarde, o hay alguna incidencia..."
+                    />
+                </div>
+
+                <button 
+                    onClick={handleClockEvent}
+                    className={`btn-clock ${isClockedIn ? 'btn-clock-out' : 'btn-clock-in'}`}
+                >
+                    {isClockedIn ? 'Fichar salida' : 'Fichar entrada'}
+                </button>
             </div>
-
-            <button 
-                onClick={handleClockEvent}
-                className={`btn-intranet ${isClockedIn ? 'btn-clock-out' : 'btn-clock-in'}`}
-            >
-                {isClockedIn ? 'Fichar salida' : 'Fichar entrada'}
-            </button>
         </div>
     );
 }

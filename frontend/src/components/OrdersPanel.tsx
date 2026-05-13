@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "#ffb641ff",    
-  processing: "#58bcffff", 
-  shipped: "#d670ffff",    
-  delivered: "#2ecc9fff",  
-  cancelled: "#e74c3c"   
+  PENDIENTE: "#ffb641ff",    
+  PAGADO: "#58bcffff", 
+  ENTREGADO: "#2ecc9fff",  
+  CANCELADO: "#e74c3c"   
 };
 
 export default function OrdersPanel() {
@@ -70,11 +69,10 @@ export default function OrdersPanel() {
                   onChange={(e) => handleStatusChange(order.id, e.target.value)}
                   className="status-select"
                 >
-                  <option value="pending">Pending</option>
-                  <option value="processing">Processing</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="PENDIENTE">Pending</option>
+                  <option value="PAGADO">Paid</option>
+                  <option value="ENTREGADO">Delivered</option>
+                  <option value="CANCELADO">Cancelled</option>
                 </select>
               </td>
               <td>${order.total ? Number(order.total).toFixed(2) : "0.00"}</td>
