@@ -17,11 +17,11 @@ export function Header() {
     const [searchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
     
-    if (location.pathname.startsWith('/intranet')) {
-        return null;
-    }
+    
 
     const [cartCount, setCartCount] = useState(0);
+
+    
 
     useEffect(() => {
         const updateCartCount = () => {
@@ -41,6 +41,10 @@ export function Header() {
             window.removeEventListener("cartUpdated", updateCartCount);
         };
     }, []);
+
+    if (location.pathname.startsWith('/intranet')) {
+        return null;
+    }
 
     const handleLogout = async () => {
         try {
@@ -120,9 +124,9 @@ export function Header() {
                                 <p className="user-dropdown-welcome">Welcome, {customer.username}</p>
                                 <button 
                                     className="user-dropdown-btn"
-                                    onClick={() => { setIsDropdownOpen(false); navigate("/mis-pedidos"); }} 
+                                    onClick={() => { setIsDropdownOpen(false); navigate("/profile"); }} 
                                 >
-                                    Acceder a los pedidos
+                                    My Profile
                                 </button>
                                 <button 
                                     className="user-dropdown-logout"

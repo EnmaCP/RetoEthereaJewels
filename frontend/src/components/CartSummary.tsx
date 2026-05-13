@@ -20,7 +20,7 @@ export function CartSummary({cart, onUpdateQuantity, onRemove, onClear, onConfir
         <div className="cart-summary">
             <h2>Resumen del carrito</h2>
             {cart.length === 0 ? (
-                <p>El carrito está vacío.</p>
+                <p>Cart is empty</p>
             ) : (
                 <ul>
                     {cart.map((item) => (
@@ -41,14 +41,14 @@ export function CartSummary({cart, onUpdateQuantity, onRemove, onClear, onConfir
                 disabled={cart.length === 0}
                 style={{ marginRight: '10px' }}
             >
-                Vaciar carrito
+                Empty cart
             </button>
             <button 
                 onClick={onConfirm} 
                 disabled={cart.length === 0}
 
             >
-                Ir a pagar
+                 Checkout
             </button>
         </div>
     );

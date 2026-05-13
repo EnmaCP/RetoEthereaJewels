@@ -54,20 +54,20 @@ export default function EditProductPage() {
         }
     };
 
-    if (loading) return <p>Cargando producto...</p>;
+    if (loading) return <p>Loading...</p>;
 
     return (
         <div className="edit-product-container">
             <div className="edit-product-card">
-                <h2>Editar Producto</h2>
+                <h2>Editing Product</h2>
                 <form className="edit-product-form" onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label>Nombre:</label>
+                        <label>Name:</label>
                         <input name="name" value={form.name} onChange={handleChange} required />
                     </div>
 
                     <div className="form-group">
-                        <label>Precio:</label>
+                        <label>Price:</label>
                         <input type="number" name="price" value={form.price} onChange={handleChange} required />
                     </div>
 
@@ -77,12 +77,12 @@ export default function EditProductPage() {
                     </div>
 
                     <div className="form-group">
-                        <label>URL Imagen:</label>
+                        <label>Imagen URL:</label>
                         <input name="image_url" value={form.image_url} onChange={handleChange} />
                     </div>
 
                     <div className="form-group checkbox-group">
-                        <label>Activo:</label>
+                        <label>Active:</label>
                         <input type="checkbox" name="active" checked={form.active} onChange={handleChange} />
                     </div>
 

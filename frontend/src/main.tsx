@@ -16,7 +16,7 @@ import RegisterPage from './components/RegisterPage'
 import { UserProvider } from './components/UserContext'
 import PrivateRoute from './components/PrivateRoute'
 import OrdersPanel from "./components/OrdersPanel";
-import { OrderHistory } from './components/OrderHistory';
+import { UserProfilePage } from "./components/UserProfilePage";
 import EditProductPage from './components/EditProductPage';
 import ShoppingCart from './components/ShoppingCart';
 import Catalogue from './components/Catalogue';
@@ -48,10 +48,10 @@ createRoot(document.getElementById('root')!).render(
           }
         />
         <Route
-          path="/mis-pedidos"
+          path="/profile"
           element={
             <PrivateRoute>
-              <OrderHistory />
+              <UserProfilePage />
             </PrivateRoute>
           }
         />

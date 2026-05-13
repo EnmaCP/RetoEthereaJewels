@@ -6,7 +6,7 @@ import { useUser } from './UserContext';
 import { productosAPI, authAPI } from '../services/apiService';
 
 
-function App() {
+export default function Catalogue() {
 
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
@@ -71,7 +71,7 @@ function App() {
       loadProducts();
     } catch (error) {
       console.error("Error:", error);
-      alert("Error al crear el producto");
+      alert("Error creating product");
     }
   };
 
@@ -122,7 +122,7 @@ function App() {
     window.dispatchEvent(new Event("cartUpdated"));
   }, [cart]);
 
-  if (loading) return <div>Cargando...</div>;
+  if (loading) return <div>Loading...</div>;
 
   const categories = Array.from(new Set(products.map(p => p.category)));
   const filteredProducts = products.filter(p => {
@@ -172,16 +172,16 @@ function App() {
       <div className="catalogue-filters">
         {filterText && (
           <div className="search-results-msg">
-            Resultados de búsqueda para: <strong>{filterText}</strong>
+            Search results for: <strong>{filterText}</strong>
           </div>
         )}
         <div className="filter-select-wrapper" style={{ marginLeft: filterText ? 'auto' : '0' }}>
-          <select 
+          <select
             className="filter-select"
-            value={filterCategory} 
+            value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
           >
-            <option value="">Todas las colecciones</option>
+            <option value="">All collections</option>
             {categories.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
@@ -221,4 +221,3 @@ function App() {
   );
 }
 
-export default App

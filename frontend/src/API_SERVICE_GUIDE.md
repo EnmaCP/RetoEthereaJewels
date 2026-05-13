@@ -116,6 +116,7 @@ const data = await authAPI.login("usuario@email.com", "password");
 // Register
 await authAPI.register("usuario", "email@email.com", "password");
 
+
 // Logout
 await authAPI.logout();
 
@@ -157,3 +158,5 @@ useEffect(() => {
 - Headers `Content-Type: application/json`
 - Credentials `include` (para cookies)
 - Manejo de errores HTTP
+
+

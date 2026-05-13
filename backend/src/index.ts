@@ -540,17 +540,18 @@ app.get("/api/orders", verifyToken, requireRole("employee", "admin"), async (req
     res.status(403).json({ error: "No tienes permiso para realizar esta accion" });
   }
 });
+/*
 app.post("/api/orders", verifyToken, async (req: AuthRequest, res: Response) => {
   const { items, address } = req.body;
 
-  if (!items || items.length === 0) return res.status(400).json({ error: "El carrito está vacío" });
-  if (!address) return res.status(400).json({ error: "La dirección es obligatoria" });
+  if (!items || items.length === 0) return res.status(400).json({ error: "Cart is empty" });
+  if (!address) return res.status(400).json({ error: "Address is required" });
 
   const customerId = req.customer!.id;
 
   for (const item of items) {
     const check = await pool.query(
-      `SELECT stock, name FROM products WHERE id = $1 AND deleted_at IS NULL AND active = TRUE`,
+      `SELECT stock, nombre FROM producto WHERE id = $1 AND deleted_at IS NULL AND active = TRUE`,
       [item.productId]
     );
     if (check.rows.length === 0) return res.status(404).json({ error: `Producto ${item.productId} no encontrado` });
@@ -564,19 +565,19 @@ app.post("/api/orders", verifyToken, async (req: AuthRequest, res: Response) => 
     await client.query("BEGIN");
 
     const orderResult = await client.query(
-      `INSERT INTO orders (customer_id, status, address) VALUES ($1, 'pending', $2) RETURNING *`,
+      `INSERT INTO carrito (id_usuario, estado, direccion) VALUES ($1, 'pendiente', $2) RETURNING *`,
       [customerId, address]
     );
     const orderId = orderResult.rows[0].id;
 
     for (const item of items) {
       await client.query(
-        `INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES ($1, $2, $3, $4)`,
-        [orderId, item.productId, item.quantity, item.unitPrice]
+        `INSERT INTO carrito_variante (id_carrito, id_variante, cantidad, precio_unitario) VALUES ($1, $2, $3, $4)`,
+        [orderId, item.productId, item.cantidad, item.precio_unitario]
       );
       await client.query(
-        "UPDATE products SET stock = stock - $1 WHERE id = $2",
-        [item.quantity, item.productId]
+        "UPDATE producto SET stock = stock - $1 WHERE id = $2",
+        [item.cantidad, item.productId]
       );
     }
     await client.query("COMMIT");
@@ -588,13 +589,59 @@ app.post("/api/orders", verifyToken, async (req: AuthRequest, res: Response) => 
   } finally {
     client.release();
   }
+});*/
+// Finalizar el pedido (Pasar de Carrito a Pedido Pagado)
+app.post("/api/cart/checkout", verifyToken, async (req: AuthRequest, res: Response) => {
+  const userId = req.customer!.id;
+  const client = await pool.connect(); // Usamos cliente para transacciones
+
+  try {
+    await client.query('BEGIN');
+
+    // 1. Buscamos el carrito pendiente del usuario
+    const cartRes = await client.query(
+      "SELECT id FROM carrito WHERE id_usuario = $1 AND estado = 'PENDIENTE'",
+      [userId]
+    );
+
+    if (cartRes.rows.length === 0) {
+      return res.status(404).json({ error: "No hay un carrito activo para comprar" });
+    }
+
+    const cartId = cartRes.rows[0].id;
+
+    // 2. Antes de cerrar, restamos el stock en la tabla 'variante'
+    // Cruzamos carrito_variante con variante para saber qué restar
+    await client.query(`
+      UPDATE variante 
+      SET stock = stock - cv.cantidad
+      FROM carrito_variante cv
+      WHERE variante.id = cv.id_variante AND cv.id_carrito = $1
+    `, [cartId]);
+
+    // 3. Cerramos el pedido cambiando el estado
+    await client.query(
+      "UPDATE carrito SET estado = 'PAGADO', created_at = NOW() WHERE id = $1",
+      [cartId]
+    );
+
+    await client.query('COMMIT');
+    res.json({ message: "¡Pedido realizado con éxito! Tu joya está en camino." });
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: "Error al procesar el pedido" });
+  } finally {
+    client.release();
+  }
 });
 app.get("/api/orders/my", verifyToken, async (req: AuthRequest, res: Response) => {
   try {
     const customerId = req.customer!.id;
     const result = await pool.query(`
-      SELECT o.id, o.status, o.address, o.created_at, SUM(oi.quantity * oi.unit_price) as total
-      FROM orders o
+      SELECT o.id, o.estado, o.direccion, o.created_at, SUM(oi.cantidad * oi.precio_unitario) as total
+      FROM pedidos o
       LEFT JOIN order_items oi ON o.id = oi.order_id
       WHERE o.customer_id = $1
       GROUP BY o.id

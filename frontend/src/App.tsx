@@ -78,7 +78,7 @@ function App() {
       loadData();
     } catch (error) {
       console.error("Error:", error);
-      alert("Error al crear el producto");
+      alert("Error while creating the product");
     }
   };
 
@@ -193,48 +193,12 @@ function App() {
             >
               <div className="category-overlay">
                 <h3>{c.nombre}</h3>
-                <p>Explorar colección</p>
+                <p>Explore collection</p>
               </div>
             </div>
           ))}
         </div>
       </section>
-
-          {customer?.role === "admin" && (
-            <div className="formulario-producto">
-              <h3>Añadir producto</h3>
-              <form onSubmit={handleSubmit} className="topbar-form">
-                <div className="form-group">
-                  <label htmlFor="name">Nombre:</label>
-                  <input type="text" id="name" name="name" value={newName} onChange={e => setNewName(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="description">Descripción:</label>
-                  <input type="text" id="description" name="description" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="price">Precio:</label>
-                  <input type="text" id="price" name="price" value={newPrice} onChange={e => setNewPrice(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="category">Categoría:</label>
-                  <input type="text" id="category" name="category" value={newCategory} onChange={e => setNewCategory(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="stock">Stock:</label>
-                  <input type="text" id="stock" name="stock" value={newStock} onChange={e => setNewStock(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="imageUrl">Imagen:</label>
-                  <input type="text" id="imageUrl" name="imageUrl" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} />
-                </div>
-                <div className="form-group btn-group">
-                  <button type="submit">Añadir</button>
-                </div>
-
-              </form>
-            </div>
-          )}
 
       <section className="all-products-section">
         <h2 className="section-title">All necklaces</h2>

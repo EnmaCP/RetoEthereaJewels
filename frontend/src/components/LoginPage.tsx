@@ -21,7 +21,12 @@ export default function LoginPage() {
         try {
             const data = await authAPI.login(identifier, password);
             setCustomer(data.customer);
-            navigate('/intranet');
+            const role = data.customer?.role;
+            if (role === 'admin' || role === 'employee') {
+                navigate('/intranet');
+            } else {
+                navigate('/profile');
+            }
         } catch (err: any) {
             console.error(err);
             setError(err.message || 'Error de conexión con el servidor');

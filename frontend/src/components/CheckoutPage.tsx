@@ -26,7 +26,7 @@ export function CheckoutPage() {
             return;
         }
         
-        fetch("http://localhost:3000/api/orders", {
+        fetch("http://localhost:3000/api/cart/checkout", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -56,9 +56,9 @@ export function CheckoutPage() {
             console.log("Order completed", data);
             alert(`Order completed successfully. Order number: ${data.order?.id || 'Unknown'}`);
             setCart([]);
-            setAddress("");
             sessionStorage.removeItem("cart");
-            navigate("/mis-pedidos");
+            window.dispatchEvent(new Event("cartUpdated"));
+            navigate("/profile");
         })
         .catch(err => {
             alert(err.message); 
