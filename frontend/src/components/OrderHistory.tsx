@@ -61,21 +61,21 @@ export function OrderHistory() {
       });
   };
 
-  if (loading) return <div className="loading-etherea">Cargando tu historial...</div>;
+  if (loading) return <div className="loading-etherea">Loading your history...</div>;
 
   return (
     <div className="order-history-wrapper">
       <div className="history-header">
-        <h2 className="history-title">Mis Pedidos</h2>
-        <p className="history-subtitle">Gestiona y revisa tus adquisiciones en Etherea</p>
+        <h2 className="history-title">My Orders</h2>
+        <p className="history-subtitle">Manage and review your Etherea purchases</p>
       </div>
       
       <div className="orders-container">
         {orders.length === 0 ? (
           <div className="empty-history">
             <div className="empty-icon">✧</div>
-            <p>Aún no has realizado ningún pedido.</p>
-            <button className="btn-shop-now" onClick={() => window.location.href = '/'}>Explorar Colección</button>
+            <p>You haven't placed any orders yet.</p>
+            <button className="btn-shop-now" onClick={() => window.location.href = '/'}>Explore Collection</button>
           </div>
         ) : (
           <div className="orders-list">
@@ -83,15 +83,15 @@ export function OrderHistory() {
               <div key={order.id} className="order-card">
                 <div className="order-card-main">
                   <div className="order-id">
-                    <span className="label">Pedido</span>
+                    <span className="label">Order</span>
                     <span className="value">#{order.id}</span>
                   </div>
                   <div className="order-date">
-                    <span className="label">Fecha</span>
-                    <span className="value">{new Date(order.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                    <span className="label">Date</span>
+                    <span className="value">{new Date(order.created_at).toLocaleDateString('en-IE', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
                   </div>
                   <div className="order-status-box">
-                    <span className="label">Estado</span>
+                    <span className="label">Status</span>
                     <span className={`status-badge ${order.estado.toLowerCase()}`}>
                       {order.estado}
                     </span>
@@ -102,7 +102,7 @@ export function OrderHistory() {
                   </div>
                   <div className="order-actions">
                     <button className="btn-details" onClick={() => fetchOrderDetail(order.id)}>
-                      Detalles
+                      Details
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M9 18l6-6-6-6" />
                       </svg>
@@ -119,18 +119,18 @@ export function OrderHistory() {
         <div className="order-detail-overlay" onClick={() => setSelectedOrder(null)}>
           <div className="order-detail-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Pedido #{selectedOrder.id}</h3>
+              <h3>Order #{selectedOrder.id}</h3>
               <button className="btn-close" onClick={() => setSelectedOrder(null)}>&times;</button>
             </div>
             
             <div className="modal-body">
               <div className="shipping-info">
-                <h4>Dirección de envío</h4>
+                <h4>Shipping address</h4>
                 <p>{selectedOrder.direccion}</p>
               </div>
 
               <div className="items-section">
-                <h4>Artículos</h4>
+                <h4>Items</h4>
                 <div className="items-list">
                   {selectedOrder.items.map((item, idx) => (
                     <div key={idx} className="item-row">
@@ -151,7 +151,7 @@ export function OrderHistory() {
 
               <div className="modal-footer">
                 <div className="total-row">
-                  <span>Total Pagado</span>
+                  <span>Total Paid</span>
                   <span className="total-amount">{Number(selectedOrder.total).toFixed(2)}€</span>
                 </div>
               </div>

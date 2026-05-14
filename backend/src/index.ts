@@ -146,6 +146,7 @@ app.post("/api/productos", async (req: Request, res: Response) => {
 });
 
 
+
 //Ver el carrito de un usuario
 app.get("/api/carrito/:idUsuario", async (req: Request<{ idUsuario: string }>, res: Response) => {
   try {
@@ -241,17 +242,18 @@ app.get("/api/detalle/:idVariante", async (req: Request<{ idVariante: string }>,
   }
 });
 
-//Crear detalle de una variante
+//Crear detalle de una variante (Personalización)
 app.post("/api/detalle", async (req: Request, res: Response) => {
   try {
-    const { id_variante, foto, grabado, precio_extra } = req.body;
+    const { id_variante, url_foto, texto_grabado, fuente_seleccionada, precio_extra } = req.body;
     if (!id_variante) {
       return res.status(400).json({ error: 'id_variante es obligatorio' });
     }
     const nuevoDetalle = await DetalleDAO.crear({
       id_variante,
-      foto,
-      grabado,
+      url_foto,
+      texto_grabado,
+      fuente_seleccionada,
       precio_extra
     });
     res.status(201).json(nuevoDetalle);
@@ -518,6 +520,38 @@ app.patch("/api/products/:id/toggle", verifyToken, requireRole("admin"), async (
   const p = result.rows[0];
   res.json({ message: p.active ? "Producto activado" : "Producto desactivado", product: p });
 });*/
+//Eliminar un producto (Soft Delete)
+app.delete("/api/productos/:id", verifyToken, requireRole("admin"), async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const productoEliminado = await ProductoDAO.softDelete(id);
+    if (productoEliminado) {
+      res.json({ message: "Producto desactivado con éxito", producto: productoEliminado });
+    } else {
+      res.status(404).json({ error: "Producto no encontrado" });
+    }
+  } catch (error) {
+    console.error('Error al eliminar producto:', error);
+    res.status(500).json({ error: 'Error al eliminar el producto' });
+  }
+});
+
+//Actualizar un producto
+app.put("/api/productos/:id", verifyToken, requireRole("admin"), async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const productoActualizado = await ProductoDAO.actualizar(id, req.body);
+    if (productoActualizado) {
+      res.json(productoActualizado);
+    } else {
+      res.status(404).json({ error: "Producto no encontrado" });
+    }
+  } catch (error) {
+    console.error('Error al actualizar producto:', error);
+    res.status(500).json({ error: 'Error al actualizar el producto' });
+  }
+});
+
 
 app.get("/api/orders", verifyToken, requireRole("employee", "admin"), async (req: AuthRequest, res: Response) => {
   try {

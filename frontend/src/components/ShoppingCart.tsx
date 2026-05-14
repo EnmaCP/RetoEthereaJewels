@@ -90,13 +90,28 @@ function ShoppingCart() {
         <div className="summary-items">
           {cart.map((item) => (
             <div key={item.product.id} className="summary-item">
-              <span className="summary-item-name">{item.product.name}</span>
-              <span className="summary-item-qty">x{item.quantity}</span>
+              <div className="summary-item-info">
+                <img 
+                  src={item.product.imageUrl || (item.product as any).image} 
+                  alt={item.product.name} 
+                  className="summary-item-img" 
+                />
+                <div className="summary-item-text">
+                  <span className="summary-item-name">{item.product.name}</span>
+                  {item.personalization && (
+                    <div className="summary-item-personalization">
+                      {item.personalization.texto_grabado && <p>Engraving: "{item.personalization.texto_grabado}"</p>}
+                      {item.personalization.url_foto && <p>Custom Photo: Yes</p>}
+                    </div>
+                  )}
+                  <span className="summary-item-qty">x{item.quantity}</span>
+                </div>
+              </div>
               <button
                 className="summary-item-remove"
                 onClick={() => removeFromCart(item.product.id)}
               >
-                <img src={remove} alt="Remove" style={{ width: '20px', height: '20px', verticalAlign: 'middle' }} />
+                <img src={remove} alt="Remove" style={{ width: '18px', height: '18px' }} />
               </button>
             </div>
           ))}

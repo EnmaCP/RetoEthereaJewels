@@ -236,22 +236,55 @@
   border: 1px solid rgba(220, 185, 145, 0.4);
 }
 
+.summary-item-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.summary-item-img {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(220, 185, 145, 0.2);
+  background: white;
+}
+
+.summary-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .summary-item-name {
-  flex-grow: 1;
   font-weight: 500;
   color: #3e3226;
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+}
+
+.summary-item-personalization {
+  font-size: 0.75rem;
+  color: #cba97c;
+  font-style: italic;
+  margin: 2px 0;
+}
+
+.summary-item-personalization p {
+  margin: 0;
 }
 
 .summary-item-qty {
-  margin: 0 20px;
   color: #8c7a6b;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   background: rgba(220, 185, 145, 0.15);
-  padding: 4px 10px;
+  padding: 2px 8px;
   border-radius: 20px;
+  width: fit-content;
 }
 
 .summary-item-remove {

@@ -240,12 +240,120 @@
 
 .actions-section {
   display: flex;
+  flex-direction: column;
   gap: 1.5rem;
   margin-top: auto;
 }
 
+.action-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.btn-personalize-outline {
+  width: 100%;
+  padding: 1.2rem;
+  background: transparent;
+  border: 1px dashed #cba97c;
+  color: #cba97c;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-personalize-outline:hover {
+  background: rgba(203, 169, 124, 0.05);
+  border-style: solid;
+  transform: translateY(-2px);
+}
+
+.personalize-form {
+  background: #fdfbf7;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(203, 169, 124, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.personalize-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.personalize-form label {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.personalize-form input {
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.personalize-form input:focus {
+  outline: none;
+  border-color: #cba97c;
+}
+
+.btn-confirm-perso {
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-confirm-perso:hover {
+  background: #333;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.perso-applied-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.btn-remove-perso {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
 .product-detail-add-btn {
-  flex: 2;
   background: #cba97c;
   color: white;
   border: none;

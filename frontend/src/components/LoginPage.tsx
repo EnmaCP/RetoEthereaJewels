@@ -29,7 +29,7 @@ export default function LoginPage() {
             }
         } catch (err: any) {
             console.error(err);
-            setError(err.message || 'Error de conexión con el servidor');
+            setError(err.message || 'Server connection error');
         } finally {
             setIsLoading(false);
         }

@@ -30,6 +30,20 @@ export class ProductoDAO {
         return rows[0];
     }
 
+    // Actualizar producto
+    static async actualizar(id: number, producto: any) {
+        const { nombre, descripcion, precio_base, id_coleccion, image_url, activo } = producto;
+        const query = `
+            UPDATE producto 
+            SET nombre = $1, descripcion = $2, precio_base = $3, id_coleccion = $4, image_url = $5, activo = $6
+            WHERE id = $7
+            RETURNING *
+        `;
+        const values = [nombre, descripcion, precio_base, id_coleccion, image_url, activo, id];
+        const { rows } = await pool.query(query, values);
+        return rows[0];
+    }
+
     //Crear un nuevo producto (Por si quieres añadir joyas desde el backend)
     static async crear(producto: any) {
         const { nombre, descripcion, precio_base, id_coleccion, image_url } = producto;

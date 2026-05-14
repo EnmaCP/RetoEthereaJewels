@@ -27,10 +27,14 @@ interface CartItem {
         id: number; // Aquí guardaremos el ID de la VARIANTE
         name: string;
         price: number;
-        image: string;
+        imageUrl: string;
     };
     quantity: number;
     material: string;
+    personalization?: {
+        url_foto?: string;
+        texto_grabado?: string;
+    };
 }
 
 export function ProductDetail() {
@@ -40,6 +44,12 @@ export function ProductDetail() {
     const [variants, setVariants] = useState<Variant[]>([]);
     const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
     const [loading, setLoading] = useState(true);
+    
+    // Estados para personalización
+    const [showPersonalize, setShowPersonalize] = useState(false);
+    const [persoFoto, setPersoFoto] = useState("");
+    const [persoTexto, setPersoTexto] = useState("");
+    const [persoGuardada, setPersoGuardada] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -48,7 +58,7 @@ export function ProductDetail() {
         fetch(`http://localhost:3000/api/productos/${id}`)
             .then(res => res.json())
             .then(data => setProduct(data))
-            .catch(err => console.error("Error al cargar producto:", err));
+            .catch(err => console.error("Error loading product:", err));
 
         // 2. Cargar las variantes (materiales, stock, etc.)
         fetch(`http://localhost:3000/api/productos/variantes/${id}`)
@@ -61,7 +71,7 @@ export function ProductDetail() {
                 setLoading(false);
             })
             .catch(err => {
-                console.error("Error al cargar variantes:", err);
+                console.error("Error loading variants:", err);
                 setLoading(false);
             });
     }, [id]);
@@ -69,7 +79,7 @@ export function ProductDetail() {
     const addToCartFromDetail = (): void => {
         // 1. Verificación Crítica: Si no hay variante, no se añade nada
         if (!selectedVariant) {
-            alert("Por favor, selecciona un material (Oro, Plata, etc.) antes de añadir al carrito.");
+            alert("Please select a material (Gold, Silver, etc.) before adding to cart.");
             return;
         }
 
@@ -79,7 +89,8 @@ export function ProductDetail() {
 
         const precioBase = Number(product.precio_base || 0);
         const precioExtra = Number(selectedVariant.precio_extra || 0);
-        const precioFinal = precioBase + precioExtra;
+        const precioPerso = persoGuardada ? 5.00 : 0;
+        const precioFinal = precioBase + precioExtra + precioPerso;
 
         const itemToAdd: CartItem = {
             product: {
@@ -87,16 +98,21 @@ export function ProductDetail() {
                 id: selectedVariant.id,
                 name: product.nombre,
                 price: precioFinal,
-                image: (selectedVariant.url_imagen || selectedVariant.imagen_url || selectedVariant.image_url) ? (selectedVariant.url_imagen || selectedVariant.imagen_url || selectedVariant.image_url) : (product.image_url || product.imagen_url || "")
+                imageUrl: (selectedVariant.url_imagen || selectedVariant.imagen_url || selectedVariant.image_url) ? (selectedVariant.url_imagen || selectedVariant.imagen_url || selectedVariant.image_url) : (product.image_url || product.imagen_url || "")
             },
             quantity: 1,
-            material: selectedVariant.material
+            material: selectedVariant.material,
+            personalization: persoGuardada ? {
+                url_foto: persoFoto,
+                texto_grabado: persoTexto
+            } : undefined
         };
 
-
-
-
-        const existingIndex = currentCart.findIndex(i => i.product.id === itemToAdd.product.id);
+        // Para items personalizados, los tratamos como únicos (no agrupamos por ID si tienen distinta personalización)
+        const existingIndex = currentCart.findIndex(i => 
+            i.product.id === itemToAdd.product.id && 
+            JSON.stringify(i.personalization) === JSON.stringify(itemToAdd.personalization)
+        );
 
         if (existingIndex !== -1) {
             currentCart[existingIndex].quantity += 1;
@@ -108,26 +124,53 @@ export function ProductDetail() {
 
         // Avisar al Header para que actualice el contador de la cesta
         window.dispatchEvent(new Event("cartUpdated"));
-        alert(`¡${product.nombre} (${selectedVariant.material}) añadido al carrito!`);
+        alert(`${product.nombre} (${selectedVariant.material})${persoGuardada ? " personalized" : ""} added to cart!`);
+    };
+
+    const handleConfirmPerso = async () => {
+        if (!selectedVariant) return;
+        
+        try {
+            const res = await fetch("http://localhost:3000/api/detalle", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id_variante: selectedVariant.id,
+                    url_foto: persoFoto,
+                    texto_grabado: persoTexto,
+                    fuente_seleccionada: "luxury-script",
+                    precio_extra: 5.00 // Precio extra por personalizar
+                })
+            });
+            
+            if (res.ok) {
+                setPersoGuardada(true);
+                setShowPersonalize(false);
+                alert("Personalization saved successfully (+5.00€)");
+            }
+        } catch (error) {
+            console.error("Error saving personalization:", error);
+        }
     };
 
     if (loading) return (
         <div className="product-loading">
             <div className="spinner"></div>
-            <p>Preparando tu joya...</p>
+            <p>Preparing your piece...</p>
         </div>
     );
 
     if (!product) return (
         <div className="product-error">
-            <h2>Vaya, no hemos encontrado esa joya</h2>
-            <button onClick={() => navigate('/')}>Volver al catálogo</button>
+            <h2>Oops, we couldn't find that piece</h2>
+            <button onClick={() => navigate('/')}>Back to catalogue</button>
         </div>
     );
 
     const precioBase = Number(product?.precio_base || 0);
     const precioExtra = Number(selectedVariant?.precio_extra || 0);
-    const precioMostrar = (precioBase + precioExtra).toFixed(2);
+    const precioPerso = persoGuardada ? 5.00 : 0;
+    const precioMostrar = (precioBase + precioExtra + precioPerso).toFixed(2);
 
     return (
         <div className="product-detail-container">
@@ -151,7 +194,7 @@ export function ProductDetail() {
                     </div>
 
                     <div className="product-description">
-                        <span className="section-label">Descripción</span>
+                        <span className="section-label">Description</span>
                         <p>{product.descripcion}</p>
                     </div>
 
@@ -176,19 +219,61 @@ export function ProductDetail() {
                             <div className={`stock-badge ${selectedVariant.stock > 0 ? "in-stock" : "out-of-stock"}`}>
                                 <span className="stock-dot"></span>
                                 {selectedVariant.stock > 0
-                                    ? `En stock: ${selectedVariant.stock} unidades`
-                                    : "Agotado"}
+                                    ? `In stock: ${selectedVariant.stock} units`
+                                    : "Out of stock"}
                             </div>
                         )}
                     </div>
 
                     <div className="actions-section">
+                        {!persoGuardada && (
+                            <button 
+                                className="btn-personalize-outline"
+                                onClick={() => setShowPersonalize(!showPersonalize)}
+                            >
+                                {showPersonalize ? "Close Personalization" : "Add Personalization (+5€)"}
+                            </button>
+                        )}
+                        
+                        {showPersonalize && (
+                            <div className="personalize-form">
+                                <div className="form-group">
+                                    <label>Image/Photo URL:</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="https://..." 
+                                        value={persoFoto}
+                                        onChange={(e) => setPersoFoto(e.target.value)}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Text to engrave:</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Your message here..." 
+                                        value={persoTexto}
+                                        onChange={(e) => setPersoTexto(e.target.value)}
+                                    />
+                                </div>
+                                <button className="btn-confirm-perso" onClick={handleConfirmPerso}>
+                                    Confirm Design
+                                </button>
+                            </div>
+                        )}
+
+                        {persoGuardada && (
+                            <div className="perso-applied-badge">
+                                ✓ Personalization applied
+                                <button className="btn-remove-perso" onClick={() => setPersoGuardada(false)}>Remove</button>
+                            </div>
+                        )}
+
                         <button
                             className="product-detail-add-btn"
                             onClick={addToCartFromDetail}
                             disabled={!selectedVariant || selectedVariant.stock <= 0}
                         >
-                            Añadir a la cesta
+                            Add to cart
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z" />
                                 <path d="M3 6h18" />
@@ -196,7 +281,7 @@ export function ProductDetail() {
                             </svg>
                         </button>
                         <button className="btn-go-back" onClick={() => navigate(-1)}>
-                            Volver
+                            Back
                         </button>
                     </div>
                 </div>

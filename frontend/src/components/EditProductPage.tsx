@@ -13,10 +13,18 @@ export default function EditProductPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`http://localhost:3000/api/products/${id}`)
+        fetch(`http://localhost:3000/api/productos/${id}`)
             .then(r => r.json())
             .then(data => {
-                setForm(data);
+                // Mapear de la respuesta de la DB (nombre, image_url) a lo que espera el form
+                setForm({
+                    name: data.nombre || "",
+                    description: data.descripcion || "",
+                    price: Number(data.precio_base || 0),
+                    stock: Number(data.stock || 0),
+                    image_url: data.image_url || data.imagen_url || "",
+                    active: data.activo !== false
+                });
                 setLoading(false);
             })
             .catch(err => console.error("Error cargando producto:", err));
@@ -37,11 +45,18 @@ export default function EditProductPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+            const body = {
+                nombre: form.name,
+                descripcion: form.description,
+                precio_base: form.price,
+                image_url: form.image_url,
+                activo: form.active
+            };
+            const res = await fetch(`http://localhost:3000/api/productos/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify(form)
+                body: JSON.stringify(body)
             });
             
             if (res.ok) {

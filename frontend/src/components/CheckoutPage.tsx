@@ -38,11 +38,11 @@ export function CheckoutPage() {
     })
     .then(async (res) => {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Error al procesar el pedido");
+        if (!res.ok) throw new Error(data.error || "Error processing your order");
         return data;
     })
     .then((data) => {
-        alert(`¡Pedido realizado con éxito! Número: ${data.order?.id}`);
+        alert(`Order placed successfully! Number: ${data.order?.id}`);
         setCart([]);
         sessionStorage.removeItem("cart");
         window.dispatchEvent(new Event("cartUpdated"));
@@ -53,7 +53,7 @@ export function CheckoutPage() {
 
     return (
         <div className="checkout-wrapper">
-            <h1 className="section-title">Finalizar Compra</h1>
+            <h1 className="section-title">Checkout</h1>
 
             <div className="checkout-container">
                 <div className="cart-section">
@@ -83,7 +83,7 @@ export function CheckoutPage() {
                         className="address-input"
                         value={address} 
                         onChange={e => setAddress(e.target.value)} 
-                        placeholder="Ej: Calle Violeta Parra 9, Zaragoza"
+                        placeholder="e.g. 123 Main St, New York"
                     />
                 </div>
                 

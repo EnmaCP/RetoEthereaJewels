@@ -43,8 +43,9 @@ export interface Coleccion {
 export interface Detalle {
   id?: number;
   id_variante: number;
-  foto?: boolean; //Default false
-  grabado?: boolean; //Default false
+  url_foto?: string;
+  texto_grabado?: string;
+  fuente_seleccionada?: string;
   precio_extra?: number | string;
 }
 

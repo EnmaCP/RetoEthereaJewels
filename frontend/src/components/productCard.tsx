@@ -7,7 +7,7 @@ interface ProductCardProps {
 
 export function ProductCard({product, onSelect}: ProductCardProps){
     const ratingNum = product.avgRating ? Math.round(Number(product.avgRating)) : 0;
-    const stars = ratingNum > 0 ? "★".repeat(ratingNum) : "Sin valoraciones";
+    const stars = ratingNum > 0 ? "★".repeat(ratingNum) : "No reviews";
 
     return (
         <div className="product-card" onClick={() => onSelect && onSelect(product.id)}>
@@ -20,12 +20,12 @@ export function ProductCard({product, onSelect}: ProductCardProps){
                     {ratingNum > 0 ? (
                         <span className="stars">{"★".repeat(ratingNum)}{"☆".repeat(5 - ratingNum)}</span>
                     ) : (
-                        <span className="no-rating">Sin valoraciones</span>
+                        <span className="no-rating">No reviews</span>
                     )}
                 </div>
-                <p className="price">{product.price.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}</p>
+                <p className="price">{product.price.toLocaleString('en-IE', { style: 'currency', currency: 'EUR' })}</p>
                 <p className={`stock ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}>
-                    {product.stock > 0 ? `En Stock: ${product.stock}` : "Agotado"}
+                    {product.stock > 0 ? `In Stock: ${product.stock}` : "Out of Stock"}
                 </p>
             </div>
         </div>

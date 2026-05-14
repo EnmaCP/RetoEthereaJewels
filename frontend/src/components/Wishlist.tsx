@@ -24,7 +24,7 @@ export function WishlistCard({ product, onRemove }: { product: Product, onRemove
                 setIsFavorite(true);
             }
         } catch (error) {
-            console.error("Error en wishlist:", error);
+            console.error("Wishlist error:", error);
         }
     };
 
@@ -45,15 +45,15 @@ export function WishlistCard({ product, onRemove }: { product: Product, onRemove
                 <h3>{product.name}</h3>
                 
                 <p className="price">
-                    {Number(product.price).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' })}
+                    {Number(product.price).toLocaleString('en-IE', { style: 'currency', currency: 'EUR' })}
                 </p>
                 
                 <p className={`stock ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}>
-                    {product.stock > 0 ? "Disponible" : "Bajo demanda"}
+                    {product.stock > 0 ? "In Stock" : "On Demand"}
                 </p>
 
                 <button className="btn-add-cart" disabled={product.stock === 0} style={{ width: '100%', marginTop: '10px' }}>
-                    Añadir al carrito
+                    Add to cart
                 </button>
             </div>
         </div>
@@ -85,13 +85,13 @@ export function Wishlist() {
         })
         .catch(err => {
             console.error(err);
-            setError('Error al cargar la lista de deseos');
+            setError('Error loading wishlist');
             setLoading(false);
         });
     }, [customer]);
 
-    if (!customer) return <div className="wishlist-page" style={{ padding: "40px", textAlign: "center" }}><p>Debes iniciar sesión para ver tu lista de deseos.</p></div>;
-    if (loading) return <div className="wishlist-page" style={{ padding: "40px", textAlign: "center" }}><p>Cargando lista de deseos...</p></div>;
+    if (!customer) return <div className="wishlist-page" style={{ padding: "40px", textAlign: "center" }}><p>You must log in to see your wishlist.</p></div>;
+    if (loading) return <div className="wishlist-page" style={{ padding: "40px", textAlign: "center" }}><p>Loading wishlist...</p></div>;
     if (error) return <div className="wishlist-page" style={{ padding: "40px", textAlign: "center", color: "red" }}><p>{error}</p></div>;
 
     return (

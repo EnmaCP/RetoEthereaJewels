@@ -10,11 +10,17 @@ export class DetalleDAO {
 
     static async crear(detalle: Detalle): Promise<Detalle> {
         const query = `
-            INSERT INTO detalle (id_variante, foto, grabado, precio_extra) 
-            VALUES ($1, $2, $3, $4) 
+            INSERT INTO detalle (id_variante, url_foto, texto_grabado, fuente_seleccionada, precio_extra) 
+            VALUES ($1, $2, $3, $4, $5) 
             RETURNING *;
         `;
-        const valores = [detalle.id_variante, detalle.foto || false, detalle.grabado || false, detalle.precio_extra || 0];
+        const valores = [
+            detalle.id_variante, 
+            detalle.url_foto || null, 
+            detalle.texto_grabado || null, 
+            detalle.fuente_seleccionada || 'default', 
+            detalle.precio_extra || 0
+        ];
         const resultado = await pool.query(query, valores);
         return resultado.rows[0];
     }

@@ -101,23 +101,23 @@ export function Header() {
                 <form className="search-bar" onSubmit={handleSearch}>
                      <input 
                         type="text" 
-                        placeholder="Buscar artículos" 
+                        placeholder="Search items" 
                         value={searchQuery}
                         onChange={handleSearchChange}
                      />
-                    <button type="submit" className="search-btn"><img src={searchIcon} alt="Lupa" className="search-icon" /></button>
+                    <button type="submit" className="search-btn"><img src={searchIcon} alt="Search" className="search-icon" /></button>
                 </form>
                 <div className="header-icons">
                     <button className="icon-btn cart-btn-wrapper">
                         <Link to={customer ? "/cart" : "/login"}>
-                            <img src={shoppingCart} alt="Carrito" className="cart-icon" />
+                            <img src={shoppingCart} alt="Cart" className="cart-icon" />
                             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
                         </Link>
                     </button>
                     
                     <div className="user-menu-container">
                         <button className="icon-btn" onClick={handleUserIconClick}>
-                            <img src={userIcon} alt="Usuario" className="user-icon" />
+                            <img src={userIcon} alt="User" className="user-icon" />
                         </button>
                         {isDropdownOpen && customer && (
                             <div className="user-dropdown">
@@ -132,7 +132,7 @@ export function Header() {
                                     className="user-dropdown-logout"
                                     onClick={() => { setIsDropdownOpen(false); handleLogout(); }} 
                                 >
-                                    Cerrar sesión
+                                    Logout
                                 </button>
                             </div>
                         )}
@@ -147,7 +147,7 @@ export function Header() {
                 <li><a href="/catalogue">Catalogue</a></li>
                 <li><Link to="/personalization">Personalization</Link></li>
                 <li><Link to="/intranet">Private Zone</Link></li>
-                <li className="favorites"><a href="/wishlist"><img src={favoritosIcon} alt="Favoritos" className="favorites-icon"/></a></li>
+                <li className="favorites"><a href="/wishlist"><img src={favoritosIcon} alt="Favorites" className="favorites-icon"/></a></li>
             </ul>  
         </nav>
         </header>

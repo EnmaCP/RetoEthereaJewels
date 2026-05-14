@@ -40,7 +40,7 @@ export default function Catalogue() {
         category: p.nombre_coleccion || "General",
         stock: 10, // Default stock as it moved to variante table
         imageUrl: p.image_url || p.imagen_url || `https://placehold.co/200x200?text=${encodeURIComponent(p.nombre)}`,
-        active: p.active !== false,
+        active: p.activo !== false,
       }));
       setProducts(mappedProducts);
     } catch (error) {
@@ -138,7 +138,7 @@ export default function Catalogue() {
 
       {customer?.role === "admin" && (
         <div className="formulario-producto">
-          <h3>Añadir producto</h3>
+          <h3>Add product</h3>
           <form onSubmit={handleSubmit} className="topbar-form">
             <div className="form-group">
               <label htmlFor="name">Name:</label>
@@ -161,7 +161,7 @@ export default function Catalogue() {
               <input type="text" id="stock" name="stock" value={newStock} onChange={e => setNewStock(e.target.value)} />
             </div>
             <div className="form-group">
-              <label htmlFor="imageUrl">Imagen:</label>
+              <label htmlFor="imageUrl">Image:</label>
               <input type="text" id="imageUrl" name="imageUrl" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} />
             </div>
             <div className="form-group btn-group">
@@ -171,23 +171,45 @@ export default function Catalogue() {
         </div>
       )}
 
-      <div className="catalogue-filters">
-        {filterText && (
-          <div className="search-results-msg">
-            Search results for: <strong>{filterText}</strong>
-          </div>
-        )}
-        <div className="filter-select-wrapper" style={{ marginLeft: filterText ? 'auto' : '0' }}>
-          <select
-            className="filter-select"
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-          >
-            <option value="">All collections</option>
+      <div className="modern-catalogue-controls">
+        <div className="controls-header">
+          {filterText ? (
+            <div className="search-info">
+              <span>Showing results for <strong>"{filterText}"</strong></span>
+              <button className="btn-clear-search" onClick={() => navigate('/catalogue')}>Clear</button>
+            </div>
+          ) : (
+            <h1 className="catalogue-title">Our Collections</h1>
+          )}
+        </div>
+
+        <div className="filter-bar">
+          <div className="category-pills">
+            <button 
+              className={`pill ${filterCategory === "" ? "active" : ""}`} 
+              onClick={() => setFilterCategory("")}
+            >
+              All Pieces
+            </button>
             {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+              <button 
+                key={cat} 
+                className={`pill ${filterCategory === cat ? "active" : ""}`}
+                onClick={() => setFilterCategory(cat)}
+              >
+                {cat}
+              </button>
             ))}
-          </select>
+          </div>
+
+          <div className="sort-wrapper">
+             <span className="sort-label">Sort by:</span>
+             <select className="minimal-select">
+                <option>Newest</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+             </select>
+          </div>
         </div>
       </div>
 
@@ -196,28 +218,28 @@ export default function Catalogue() {
           <div key={product.id} className="product-item-wrapper">
             <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
 
-            <button title="Añadir al carrito" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
+            <button title="Add to cart" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
               onClick={() => addToCart(product)}>
-              <img src={cartIcon} style={{ width: '20px', height: '20px' }} alt="carrito" />
+              <img src={cartIcon} style={{ width: '20px', height: '20px' }} alt="cart" />
             </button>
 
             <div className="product-actions">
               {(customer?.role === "admin" || customer?.role === "employee") && (
-                <button className='editarStock' title="Editar stock"
+                <button className='editarStock' title="Edit stock"
                   onClick={() => handleUpdateStock(product.id, product.stock)}>
                   <img src={edit} />
                 </button>
               )}
 
               {customer?.role === "admin" && (
-                <button className='editarStock' title="Editar producto"
+                <button className='editarStock' title="Edit product"
                   onClick={() => navigate(`/admin/products/${product.id}/edit`)}>
                   <img src={settings} />
                 </button>
               )}
 
               {customer?.role === "admin" && (
-                <button title="Borrar" className="btn-danger"
+                <button title="Delete" className="btn-danger"
                   onClick={() => handleDelete(product.id)}>
                   <img src={trash} />
                 </button>

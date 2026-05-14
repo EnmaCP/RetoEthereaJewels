@@ -19,7 +19,7 @@ export default function RegisterPage() {
         setSuccess('');
 
         if (password !== confirmPassword) {
-            setError('Las contraseñas no coinciden');
+            setError('Passwords do not match');
             return;
         }
 

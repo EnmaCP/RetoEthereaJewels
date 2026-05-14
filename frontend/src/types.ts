@@ -20,6 +20,11 @@ export interface Review {
 export interface CartItem{
     product: Product;
     quantity: number;
+    material?: string;
+    personalization?: {
+        url_foto?: string;
+        texto_grabado?: string;
+    };
 }
 export interface Order{
     id: number;
