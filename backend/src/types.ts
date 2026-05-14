@@ -29,6 +29,7 @@ export interface Variante {
   material?: string;
   precio_extra?: number | string;
   stock?: number;
+  url_imagen?: string;
 }
 
 export interface Coleccion {

@@ -211,7 +211,7 @@ app.get("/api/variantes/:idProducto", async (req: Request<{ idProducto: string }
 //Crear una variante
 app.post("/api/variantes", async (req: Request, res: Response) => {
   try {
-    const { id_producto, material, precio_extra, stock } = req.body;
+    const { id_producto, material, precio_extra, stock, url_imagen } = req.body;
     if (!id_producto) {
       return res.status(400).json({ error: 'id_producto es obligatorio' });
     }
@@ -219,7 +219,8 @@ app.post("/api/variantes", async (req: Request, res: Response) => {
       id_producto,
       material,
       precio_extra,
-      stock
+      stock,
+      url_imagen
     });
     res.status(201).json(nuevaVariante);
   } catch (error) {

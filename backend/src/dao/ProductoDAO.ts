@@ -8,6 +8,7 @@ export class ProductoDAO {
             SELECT p.*, c.nombre as nombre_coleccion 
             FROM producto p
             LEFT JOIN coleccion c ON p.id_coleccion = c.id
+            WHERE p.activo = true
             ORDER BY p.id ASC
         `;
         const { rows } = await pool.query(query);
@@ -22,12 +23,19 @@ export class ProductoDAO {
         return rows[0] || null;
     }
 
+    // Soft delete (Desactivar producto)
+    static async softDelete(id: number) {
+        const query = 'UPDATE producto SET activo = false WHERE id = $1 RETURNING *';
+        const { rows } = await pool.query(query, [id]);
+        return rows[0];
+    }
+
     //Crear un nuevo producto (Por si quieres añadir joyas desde el backend)
     static async crear(producto: any) {
         const { nombre, descripcion, precio_base, id_coleccion, image_url } = producto;
         const query = `
-            INSERT INTO producto (nombre, descripcion, precio_base, id_coleccion, image_url)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO producto (nombre, descripcion, precio_base, id_coleccion, image_url, activo)
+            VALUES ($1, $2, $3, $4, $5, true)
             RETURNING *
         `;
         const values = [nombre, descripcion, precio_base, id_coleccion, image_url];

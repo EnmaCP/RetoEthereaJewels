@@ -8,6 +8,9 @@ interface Variant {
     material: string;
     precio_extra: number;
     stock: number;
+    url_imagen?: string;
+    imagen_url?: string;
+    image_url?: string;
 }
 
 interface Product {
@@ -15,7 +18,8 @@ interface Product {
     nombre: string;
     descripcion: string;
     precio_base: number;
-    imagen_url: string;
+    imagen_url?: string;
+    image_url?: string;
 }
 
 interface CartItem {
@@ -63,32 +67,34 @@ export function ProductDetail() {
     }, [id]);
 
     const addToCartFromDetail = (): void => {
-       // 1. Verificación Crítica: Si no hay variante, no se añade nada
-    if (!selectedVariant) {
-        alert("Por favor, selecciona un material (Oro, Plata, etc.) antes de añadir al carrito.");
-        return;
-    }
+        // 1. Verificación Crítica: Si no hay variante, no se añade nada
+        if (!selectedVariant) {
+            alert("Por favor, selecciona un material (Oro, Plata, etc.) antes de añadir al carrito.");
+            return;
+        }
 
-    const saved = sessionStorage.getItem("cart");
-    let currentCart: CartItem[] = saved ? JSON.parse(saved) : [];
-
-
-    const precioFinal = Number(product.precio_base) + Number(selectedVariant.precio_extra);
-
-    const itemToAdd: CartItem = {
-        product: {
-            // ENVIAMOS EL ID DE LA VARIANTE, NO DEL PRODUCTO
-            id: selectedVariant.id, 
-            name: product.nombre,
-            price: Number(product.precio_base) + Number(selectedVariant.precio_extra),
-            image: product.imagen_url
-        },
-        quantity: 1,
-        material: selectedVariant.material
-    };
+        const saved = sessionStorage.getItem("cart");
+        let currentCart: CartItem[] = saved ? JSON.parse(saved) : [];
 
 
-        
+        const precioBase = Number(product.precio_base || 0);
+        const precioExtra = Number(selectedVariant.precio_extra || 0);
+        const precioFinal = precioBase + precioExtra;
+
+        const itemToAdd: CartItem = {
+            product: {
+                // ENVIAMOS EL ID DE LA VARIANTE, NO DEL PRODUCTO
+                id: selectedVariant.id,
+                name: product.nombre,
+                price: precioFinal,
+                image: (selectedVariant.url_imagen || selectedVariant.imagen_url || selectedVariant.image_url) ? (selectedVariant.url_imagen || selectedVariant.imagen_url || selectedVariant.image_url) : (product.image_url || product.imagen_url || "")
+            },
+            quantity: 1,
+            material: selectedVariant.material
+        };
+
+
+
 
         const existingIndex = currentCart.findIndex(i => i.product.id === itemToAdd.product.id);
 
@@ -99,7 +105,7 @@ export function ProductDetail() {
         }
 
         sessionStorage.setItem("cart", JSON.stringify(currentCart));
-        
+
         // Avisar al Header para que actualice el contador de la cesta
         window.dispatchEvent(new Event("cartUpdated"));
         alert(`¡${product.nombre} (${selectedVariant.material}) añadido al carrito!`);
@@ -111,7 +117,7 @@ export function ProductDetail() {
             <p>Preparando tu joya...</p>
         </div>
     );
-    
+
     if (!product) return (
         <div className="product-error">
             <h2>Vaya, no hemos encontrado esa joya</h2>
@@ -119,9 +125,9 @@ export function ProductDetail() {
         </div>
     );
 
-    const precioMostrar = selectedVariant 
-        ? (Number(product.precio_base) + Number(selectedVariant.precio_extra)).toFixed(2)
-        : Number(product.precio_base).toFixed(2);
+    const precioBase = Number(product?.precio_base || 0);
+    const precioExtra = Number(selectedVariant?.precio_extra || 0);
+    const precioMostrar = (precioBase + precioExtra).toFixed(2);
 
     return (
         <div className="product-detail-container">
@@ -129,7 +135,11 @@ export function ProductDetail() {
                 {/* Columna Izquierda: Imagen */}
                 <div className="product-image-section">
                     <div className="image-wrapper">
-                        <img src={product.imagen_url} alt={product.nombre} className="main-product-image" />
+                        <img 
+                            src={(selectedVariant?.url_imagen || selectedVariant?.imagen_url || selectedVariant?.image_url) ? (selectedVariant?.url_imagen || selectedVariant?.imagen_url || selectedVariant?.image_url) : (product.image_url || product.imagen_url || `https://placehold.co/600x600?text=${encodeURIComponent(product.nombre)}`)} 
+                            alt={product.nombre} 
+                            className="main-product-image" 
+                        />
                     </div>
                 </div>
 
@@ -139,7 +149,7 @@ export function ProductDetail() {
                         <h1 className="product-title">{product.nombre}</h1>
                         <div className="price-tag">{precioMostrar}€</div>
                     </div>
-                    
+
                     <div className="product-description">
                         <span className="section-label">Descripción</span>
                         <p>{product.descripcion}</p>
@@ -149,7 +159,7 @@ export function ProductDetail() {
                         <span className="section-label">Material</span>
                         <div className="material-options">
                             {variants.map(v => (
-                                <button 
+                                <button
                                     key={v.id}
                                     className={`material-btn ${selectedVariant?.id === v.id ? 'active' : ''}`}
                                     onClick={() => setSelectedVariant(v)}
@@ -165,16 +175,16 @@ export function ProductDetail() {
                         {selectedVariant && (
                             <div className={`stock-badge ${selectedVariant.stock > 0 ? "in-stock" : "out-of-stock"}`}>
                                 <span className="stock-dot"></span>
-                                {selectedVariant.stock > 0 
-                                    ? `En stock: ${selectedVariant.stock} unidades` 
+                                {selectedVariant.stock > 0
+                                    ? `En stock: ${selectedVariant.stock} unidades`
                                     : "Agotado"}
                             </div>
                         )}
                     </div>
 
                     <div className="actions-section">
-                        <button 
-                            className="btn-add-to-cart" 
+                        <button
+                            className="product-detail-add-btn"
                             onClick={addToCartFromDetail}
                             disabled={!selectedVariant || selectedVariant.stock <= 0}
                         >
@@ -202,4 +212,4 @@ function getMaterialColor(material: string) {
     if (m.includes("plata")) return "#c0c0c0";
     if (m.includes("diamante")) return "#e5e5e5";
     return "#333";
-}
+}

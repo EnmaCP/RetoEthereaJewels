@@ -5,7 +5,7 @@ export class VarianteDAO {
     // Esto es lo que usas en la página de detalle para mostrar opciones
     static async obtenerPorProducto(idProducto: number) {
         const query = `
-            SELECT id, material, precio_extra, stock 
+            SELECT * 
             FROM variante 
             WHERE id_producto = $1 AND stock > 0
         `;
@@ -14,11 +14,11 @@ export class VarianteDAO {
     }
     static async crear(variante: Variante): Promise<Variante> {
         const query = `
-            INSERT INTO variante (id_producto, material, precio_extra, stock) 
-            VALUES ($1, $2, $3, $4) 
+            INSERT INTO variante (id_producto, material, precio_extra, stock, url_imagen) 
+            VALUES ($1, $2, $3, $4, $5) 
             RETURNING *;
         `;
-        const valores = [variante.id_producto, variante.material, variante.precio_extra || 0, variante.stock || 0];
+        const valores = [variante.id_producto, variante.material, variante.precio_extra || 0, variante.stock || 0, variante.url_imagen];
         const resultado = await pool.query(query, valores);
         return resultado.rows[0];
     }
