@@ -988,3 +988,8 @@ body {
     transform: scale(1.1);
   }
 }
+.scrollable-grid { display: flex !important; flex-wrap: nowrap; overflow-x: auto; gap: 2rem; padding-bottom: 2rem; scroll-behavior: smooth; scroll-snap-type: x mandatory; }
+.scrollable-grid > .product-item-wrapper { flex: 0 0 auto; width: 280px; scroll-snap-align: start; }
+.scrollable-grid::-webkit-scrollbar { height: 8px; }
+.scrollable-grid::-webkit-scrollbar-track { background: rgba(203, 169, 124, 0.1); border-radius: 4px; }
+.scrollable-grid::-webkit-scrollbar-thumb { background: #cba97c; border-radius: 4px; }

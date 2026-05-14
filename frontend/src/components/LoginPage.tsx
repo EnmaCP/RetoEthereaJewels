@@ -37,7 +37,7 @@ export default function LoginPage() {
 
     return (
         <div className="login-container">
-            <h2 className="login-title">Iniciar Sesión</h2>
+            <h2 className="login-title">Welcome back!</h2>
             
             {error && (
                 <div className="login-error">

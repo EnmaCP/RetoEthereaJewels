@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useUser } from "./UserContext";
 import { OrderHistory } from "./OrderHistory";
 import "./UserProfilePage.css";
+import setting from "../components/imagen/SettingIcon.png";
+import userIcon from "../components/imagen/User2.png";
+import packageIcon from "../components/imagen/package1.png";
 
 export function UserProfilePage() {
   const { customer } = useUser();
@@ -38,20 +41,20 @@ export function UserProfilePage() {
             <li 
               className={activeTab === "profile" ? "active" : ""} 
               onClick={() => setActiveTab("profile")}
-            >
-              👤 Profile Settings
+            > 
+              <img src={userIcon} alt="Profile" className="tab-icon" style={{ width: '20px', height: '20px', marginRight: '10px', verticalAlign: 'middle' }} /> Profile Settings
             </li>
             <li 
               className={activeTab === "orders" ? "active" : ""} 
               onClick={() => setActiveTab("orders")}
             >
-              📦 Order History
+              <img src={packageIcon} alt="Orders" className="tab-icon" style={{ width: '20px', height: '20px', marginRight: '10px', verticalAlign: 'middle' }} /> Order History
             </li>
             <li 
               className={activeTab === "settings" ? "active" : ""} 
               onClick={() => setActiveTab("settings")}
             >
-              ⚙️ Account Settings
+               <img src={setting} alt="Settings" className="tab-icon" style={{ width: '20px', height: '20px', marginRight: '10px', verticalAlign: 'middle' }} /> Account Settings
             </li>
           </ul>
         </div>

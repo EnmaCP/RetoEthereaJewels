@@ -4,8 +4,10 @@ import { ProductCard } from './productCard'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from './UserContext';
 import { productosAPI, authAPI } from '../services/apiService';
-
-
+import edit from '../components/imagen/edit.png';
+import trash from '../components/imagen/delete1.png';
+import settings from '../components/imagen/setting2.png';
+import cartIcon from '../components/imagen/cart2.png';
 export default function Catalogue() {
 
   const navigate = useNavigate();
@@ -194,23 +196,30 @@ export default function Catalogue() {
           <div key={product.id} className="product-item-wrapper">
             <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
 
-            <button title="Add to cart" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
+            <button title="Añadir al carrito" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
               onClick={() => addToCart(product)}>
-              🛒
+              <img src={cartIcon} style={{ width: '20px', height: '20px' }} alt="carrito" />
             </button>
 
             <div className="product-actions">
               {(customer?.role === "admin" || customer?.role === "employee") && (
                 <button className='editarStock' title="Editar stock"
                   onClick={() => handleUpdateStock(product.id, product.stock)}>
-                  ✏️
+                  <img src={edit} />
+                </button>
+              )}
+
+              {customer?.role === "admin" && (
+                <button className='editarStock' title="Editar producto"
+                  onClick={() => navigate(`/admin/products/${product.id}/edit`)}>
+                  <img src={settings} />
                 </button>
               )}
 
               {customer?.role === "admin" && (
                 <button title="Borrar" className="btn-danger"
                   onClick={() => handleDelete(product.id)}>
-                  🗑️
+                  <img src={trash} />
                 </button>
               )}
             </div>

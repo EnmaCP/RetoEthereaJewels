@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { CartItem } from '../types';
 import { useUser } from './UserContext';
 import './ShoppingCart.css';
+import remove from "../components/imagen/delete1.png";
 
 function ShoppingCart() {
   const navigate = useNavigate();
@@ -12,10 +13,15 @@ function ShoppingCart() {
   });
 
   const { customer } = useUser();
-
-  // Guardar carrito local en sessionStorage
   useEffect(() => {
-    sessionStorage.setItem("cart", JSON.stringify(cart));
+    //Guardar carrito en basede datos
+    if (customer !== null) {
+      const data = {
+        id_carrito: customer.id,
+        id_variante: cart.map(item => item.product.id),
+        cantidad: cart.map(item => item.quantity)
+      };
+    }
     window.dispatchEvent(new Event("cartUpdated"));
   }, [cart]);
 
@@ -29,7 +35,6 @@ function ShoppingCart() {
     }).filter(item => item.quantity > 0));
   };
 
-  // Eliminar del carrito local
   const removeFromCart = (id: number): void => {
     setCart(prev => prev.filter(item => item.product.id !== id));
   };
@@ -91,7 +96,7 @@ function ShoppingCart() {
                 className="summary-item-remove"
                 onClick={() => removeFromCart(item.product.id)}
               >
-                🗑️
+                <img src={remove} alt="Remove" style={{ width: '20px', height: '20px', verticalAlign: 'middle' }} />
               </button>
             </div>
           ))}

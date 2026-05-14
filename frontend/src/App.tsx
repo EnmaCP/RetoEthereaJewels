@@ -6,6 +6,10 @@ import type { CartItem } from './types';
 import { useUser } from './components/UserContext';
 import { productosAPI, authAPI } from './services/apiService';
 import videoPresentation from './components/imagen/videopresentation.mp4';
+import edit from './components/imagen/edit.png';
+import trash from './components/imagen/delete1.png';
+import settings from './components/imagen/setting2.png';
+import cartIcon from './components/imagen/cart2.png';
 
 function App() {
 
@@ -131,6 +135,50 @@ function App() {
 
   if (loading) return <div>Loading...</div>;
 
+  const renderProductGrid = (title: string, productsToRender: Product[]) => {
+    if (productsToRender.length === 0) return null;
+    return (
+      <section className="all-products-section">
+        <h2 className="section-title">{title}</h2>
+        <div className="products-grid">
+          {productsToRender.map((product) => (
+            <div key={product.id} className="product-item-wrapper">
+              <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
+
+              <button title="Añadir al carrito" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
+                onClick={() => addToCart(product)}>
+                <img src={cartIcon} style={{ width: '20px', height: '20px' }} alt="carrito" />
+              </button>
+
+              <div className="product-actions">
+                {(customer?.role === "admin" || customer?.role === "employee") && (
+                  <button className='editarStock' title="Editar stock"
+                    onClick={() => handleUpdateStock(product.id, product.stock)}>
+                    <img src={edit} />
+                  </button>
+                )}
+
+                {customer?.role === "admin" && (
+                  <button className='editarStock' title="Editar producto"
+                    onClick={() => navigate(`/admin/products/${product.id}/edit`)}>
+                    <img src={settings} />
+                  </button>
+                )}
+
+                {customer?.role === "admin" && (
+                  <button title="Borrar" className="btn-danger"
+                    onClick={() => handleDelete(product.id)}>
+                    <img src={trash} />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  };
+
   return (
     <>
       <section className="hero-section" style={{ position: 'relative', overflow: 'hidden', height: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -158,26 +206,6 @@ function App() {
         </div>
       </section>
 
-      {/* Featured Carousel */}
-      <section className="featured-carousel-section">
-        <h2 className="section-title">Our necklaces</h2>
-        <div className="carousel-container">
-          <div className="carousel-track" style={{ transform: `translateX(-${carouselIndex * 100}%)` }}>
-            {featuredProducts.map((p) => (
-              <div key={p.id} className="carousel-slide" onClick={() => navigate(`/product/${p.id}`)}>
-                <img src={p.imageUrl} alt={p.name} />
-                <div className="carousel-info">
-                  <h3>{p.name}</h3>
-                  <p>{p.price}€</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button className="carousel-btn prev" onClick={() => setCarouselIndex(prev => (prev === 0 ? featuredProducts.length - 1 : prev - 1))}>❮</button>
-          <button className="carousel-btn next" onClick={() => setCarouselIndex(prev => (prev === featuredProducts.length - 1 ? 0 : prev + 1))}>❯</button>
-        </div>
-      </section>
-
       {/* Categories Section */}
       <section className="categories-section">
         <h2 className="section-title">Collections</h2>
@@ -200,44 +228,11 @@ function App() {
         </div>
       </section>
 
-      <section className="all-products-section">
-        <h2 className="section-title">All necklaces</h2>
-        <div className="products-grid">
-            {products.map((product) => (
-              <div key={product.id} className="product-item-wrapper">
-                <ProductCard product={product} onSelect={(id) => navigate(`/product/${id}`)} />
+      {/* New Arrivals Grid */}
+      {renderProductGrid("New Arrivals", [...products].reverse().slice(0, 4))}
 
-                <button title="Añadir al carrito" className="btn-add-to-cart" disabled={product.stock === 0 || product.active == false}
-                  onClick={() => addToCart(product)}>
-                  🛒
-                </button>
-
-                <div className="product-actions">
-                  {(customer?.role === "admin" || customer?.role === "employee") && (
-                    <button className='editarStock' title="Editar stock"
-                      onClick={() => handleUpdateStock(product.id, product.stock)}>
-                      ✏️
-                    </button>
-                  )}
-
-                  {customer?.role === "admin" && (
-                    <button className='editarStock' title="Editar producto"
-                      onClick={() => navigate(`/admin/products/${product.id}/edit`)}>
-                      ⚙️
-                    </button>
-                  )}
-
-                  {customer?.role === "admin" && (
-                    <button title="Borrar" className="btn-danger"
-                      onClick={() => handleDelete(product.id)}>
-                      🗑️
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-      </section>
+      {/* Specific Collection Grid */}
+      {collections.length > 0 && renderProductGrid(collections[0].nombre, products.filter(p => p.category === collections[0].nombre).slice(0, 4))}
     </>
   );
 }
