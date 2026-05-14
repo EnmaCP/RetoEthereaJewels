@@ -15,56 +15,41 @@ export function CheckoutPage() {
 
     const total = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-   const handleCheckout = () => {
-        if (cart.length === 0) {
-            alert("There are no products in the cart");
-            return;
-        }
-
+    const handleCheckout = () => {
         if (!address.trim()) {
             alert("Please, write your address");
             return;
         }
-        
-        fetch("http://localhost:3000/api/cart/checkout", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials:"include",
-            body: JSON.stringify({
-                items: cart.map((item) => ({
-                    productId: item.product.id,
-                    quantity: item.quantity,
-                    unitPrice: item.product.price
-                })),
-                address: address,
-            })
-        })
-        .then(async (res) => {
-            const data = await res.json();
-            
-            if (!res.ok) {
-                if (res.status === 409) {
-                    throw new Error(data.error); 
-                }
-                throw new Error("Error processing order");
-            }
-            return data;
-        })
-        .then((data) => {
-            console.log("Order completed", data);
-            alert(`Order completed successfully. Order number: ${data.order?.id || 'Unknown'}`);
-            setCart([]);
-            sessionStorage.removeItem("cart");
-            window.dispatchEvent(new Event("cartUpdated"));
-            navigate("/profile");
-        })
-        .catch(err => {
-            alert(err.message); 
-        });
-        
-    }
+
+    const datosPedido = {
+        items: cart.map((item) => ({
+            // Aquí 'item.product.id' ya es el ID de la variante gracias al paso anterior
+            id_variante: item.product.id, 
+            cantidad: item.quantity
+        })),
+        direccion: address // Se mapea a 'direccion' para la base de datos
+    };
+
+    fetch("http://localhost:3000/api/cart/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(datosPedido)
+    })
+    .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error al procesar el pedido");
+        return data;
+    })
+    .then((data) => {
+        alert(`¡Pedido realizado con éxito! Número: ${data.order?.id}`);
+        setCart([]);
+        sessionStorage.removeItem("cart");
+        window.dispatchEvent(new Event("cartUpdated"));
+        navigate("/profile");
+    })
+    .catch(err => alert(err.message));
+};
 
     return (
         <div className="checkout-wrapper">

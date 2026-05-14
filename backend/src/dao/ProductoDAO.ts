@@ -16,7 +16,8 @@ export class ProductoDAO {
 
     //Obtener un producto por ID (Para la página de detalle)
     static async obtenerPorId(id: number) {
-        const query = 'SELECT * FROM producto WHERE id = $1';
+        // Especificamos las columnas para que el frontend reciba lo que espera
+        const query = 'SELECT id, nombre, descripcion, precio_base, image_url, activo FROM producto WHERE id = $1';
         const { rows } = await pool.query(query, [id]);
         return rows[0] || null;
     }

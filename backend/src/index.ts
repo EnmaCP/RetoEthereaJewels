@@ -159,22 +159,13 @@ app.get("/api/carrito/:idUsuario", async (req: Request<{ idUsuario: string }>, r
 });
 
 //Añadir item al carrito
-app.post("/api/carrito", async (req: Request, res: Response) => {
-  try {
+// --- CARRITO ---
+app.post("/api/carrito", async (req, res) => {
     const { id_carrito, id_variante, cantidad } = req.body;
-    if (!id_carrito || !id_variante) {
-      return res.status(400).json({ error: 'id_carrito e id_variante son obligatorios' });
-    }
-    const nuevoItem = await CarritoVarianteDAO.añadirItem({
-      id_carrito,
-      id_variante,
-      cantidad: cantidad || 1
-    });
-    res.status(201).json(nuevoItem);
-  } catch (error) {
-    console.error('Error al añadir item al carrito:', error);
-    res.status(500).json({ error: 'Error al añadir item al carrito' });
-  }
+    try {
+        const item = await CarritoVarianteDAO.añadirItem(id_carrito, id_variante, cantidad);
+        res.status(201).json(item);
+    } catch (e) { res.status(500).json({ error: "Error al añadir" }); }
 });
 
 //Eliminar item del carrito
@@ -394,7 +385,7 @@ app.get("/api/test", async (req: Request, res: Response) => {
   const result = await pool.query("SELECT NOW()");
   res.json({ connected: true, time: result.rows[0].now });
 });
-
+/*
 app.get("/api/products", async (req: Request, res: Response) => {
   try {
 
@@ -525,7 +516,7 @@ app.patch("/api/products/:id/toggle", verifyToken, requireRole("admin"), async (
   }
   const p = result.rows[0];
   res.json({ message: p.active ? "Producto activado" : "Producto desactivado", product: p });
-});
+});*/
 
 app.get("/api/orders", verifyToken, requireRole("employee", "admin"), async (req: AuthRequest, res: Response) => {
   try {
@@ -540,132 +531,95 @@ app.get("/api/orders", verifyToken, requireRole("employee", "admin"), async (req
     res.status(403).json({ error: "No tienes permiso para realizar esta accion" });
   }
 });
-/*
-app.post("/api/orders", verifyToken, async (req: AuthRequest, res: Response) => {
-  const { items, address } = req.body;
 
-  if (!items || items.length === 0) return res.status(400).json({ error: "Cart is empty" });
-  if (!address) return res.status(400).json({ error: "Address is required" });
+app.post("/api/cart/checkout", verifyToken, async (req: AuthRequest, res: Response) => {
+  const userId = req.customer!.id;
+  const { items, direccion } = req.body; // Cambiado 'address' por 'direccion' para coincidir con el Frontend
 
-  const customerId = req.customer!.id;
-
-  for (const item of items) {
-    const check = await pool.query(
-      `SELECT stock, nombre FROM producto WHERE id = $1 AND deleted_at IS NULL AND active = TRUE`,
-      [item.productId]
-    );
-    if (check.rows.length === 0) return res.status(404).json({ error: `Producto ${item.productId} no encontrado` });
-    if (check.rows[0].stock < item.quantity) {
-      return res.status(409).json({ error: `Stock insuficiente para "${check.rows[0].name}" (disponible: ${check.rows[0].stock})` });
-    }
-  }
+  if (!items || items.length === 0) return res.status(400).json({ error: "El carrito está vacío" });
 
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-
-    const orderResult = await client.query(
-      `INSERT INTO carrito (id_usuario, estado, direccion) VALUES ($1, 'pendiente', $2) RETURNING *`,
-      [customerId, address]
-    );
-    const orderId = orderResult.rows[0].id;
-
-    for (const item of items) {
-      await client.query(
-        `INSERT INTO carrito_variante (id_carrito, id_variante, cantidad, precio_unitario) VALUES ($1, $2, $3, $4)`,
-        [orderId, item.productId, item.cantidad, item.precio_unitario]
-      );
-      await client.query(
-        "UPDATE producto SET stock = stock - $1 WHERE id = $2",
-        [item.cantidad, item.productId]
-      );
-    }
-    await client.query("COMMIT");
-    res.status(201).json({ message: "Pedido creado", order: orderResult.rows[0] });
-  } catch (err: any) {
-    console.error("Error en transacción POST /api/orders:", err);
-    await client.query("ROLLBACK");
-    res.status(500).json({ error: "Error al crear el pedido" });
-  } finally {
-    client.release();
-  }
-});*/
-// Finalizar el pedido (Pasar de Carrito a Pedido Pagado)
-app.post("/api/cart/checkout", verifyToken, async (req: AuthRequest, res: Response) => {
-  const userId = req.customer!.id;
-  const client = await pool.connect(); // Usamos cliente para transacciones
-
-  try {
     await client.query('BEGIN');
 
-    // 1. Buscamos el carrito pendiente del usuario
-    const cartRes = await client.query(
-      "SELECT id FROM carrito WHERE id_usuario = $1 AND estado = 'PENDIENTE'",
-      [userId]
+    // 1. Crear el nuevo carrito (pedido)
+    const newCartRes = await client.query(
+      "INSERT INTO carrito (id_usuario, estado, direccion) VALUES ($1, 'PAGADO', $2) RETURNING id",
+      [userId, direccion]
     );
+    const cartId = newCartRes.rows[0].id;
 
-    if (cartRes.rows.length === 0) {
-      return res.status(404).json({ error: "No hay un carrito activo para comprar" });
+    // 2. Insertar productos y actualizar stock
+    for (const item of items) {
+      // IMPORTANTE: El frontend envía 'id_variante' y 'cantidad'
+      const idVariante = item.id_variante;
+      const cantidad = item.cantidad;
+
+      if (!idVariante) throw new Error("ID de variante no detectado en el item");
+
+      await client.query(
+        "INSERT INTO carrito_variante (id_carrito, id_variante, cantidad) VALUES ($1, $2, $3)",
+        [cartId, idVariante, cantidad]
+      );
+
+      await client.query(
+        "UPDATE variante SET stock = stock - $1 WHERE id = $2",
+        [cantidad, idVariante]
+      );
     }
 
-    const cartId = cartRes.rows[0].id;
-
-    // 2. Antes de cerrar, restamos el stock en la tabla 'variante'
-    // Cruzamos carrito_variante con variante para saber qué restar
-    await client.query(`
-      UPDATE variante 
-      SET stock = stock - cv.cantidad
-      FROM carrito_variante cv
-      WHERE variante.id = cv.id_variante AND cv.id_carrito = $1
-    `, [cartId]);
-
-    // 3. Cerramos el pedido cambiando el estado
-    await client.query(
-      "UPDATE carrito SET estado = 'PAGADO', created_at = NOW() WHERE id = $1",
-      [cartId]
-    );
-
     await client.query('COMMIT');
-    res.json({ message: "¡Pedido realizado con éxito! Tu joya está en camino." });
+    res.status(201).json({ message: "¡Pedido realizado!", order: { id: cartId } });
 
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error(err);
-    res.status(500).json({ error: "Error al procesar el pedido" });
+    console.error("Error detallado en checkout:", err);
+    res.status(500).json({ error: "Error al procesar la compra en la base de datos" });
   } finally {
     client.release();
   }
 });
+
+
+// backend/src/index.ts
 app.get("/api/orders/my", verifyToken, async (req: AuthRequest, res: Response) => {
   try {
-    const customerId = req.customer!.id;
+    const userId = req.customer!.id;
+    // Buscamos carritos pagados y calculamos el total al vuelo
     const result = await pool.query(`
-      SELECT o.id, o.estado, o.direccion, o.created_at, SUM(oi.cantidad * oi.precio_unitario) as total
-      FROM pedidos o
-      LEFT JOIN order_items oi ON o.id = oi.order_id
-      WHERE o.customer_id = $1
-      GROUP BY o.id
-      ORDER BY o.created_at DESC
-    `, [customerId]);
+      SELECT 
+        c.id, 
+        c.estado, 
+        c.direccion, 
+        c.created_at,
+        COALESCE(SUM(cv.cantidad * p.precio_base), 0) as total_calculado
+      FROM carrito c
+      LEFT JOIN carrito_variante cv ON c.id = cv.id_carrito
+      LEFT JOIN producto p ON cv.id_variante = p.id
+      WHERE c.id_usuario = $1 AND c.estado = 'PAGADO'
+      GROUP BY c.id
+      ORDER BY c.created_at DESC
+    `, [userId]);
 
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Error al obtener tus pedidos" });
+    res.status(500).json({ error: "Error al obtener el historial" });
   }
 });
+
 app.get("/api/orders/:id", async (req: Request<{ id: string }>, res: Response) => {
   const orderId = parseInt(req.params.id);
-  const orderResult = await pool.query('SELECT * FROM orders WHERE id = $1', [orderId]);
+  const orderResult = await pool.query('SELECT * FROM carrito WHERE id = $1', [orderId]);
   if (orderResult.rows.length === 0) {
     return res.status(404).json({ error: "Pedido no encontrado" });
   }
   const itemsResult = await pool.query(`
-        SELECT oi.quantity, oi.unit_price, (oi.quantity * oi.unit_price) as subtotal, 
-               p.name, p.image_url 
-        FROM order_items oi 
-        JOIN products p ON oi.product_id = p.id 
-        WHERE oi.order_id = $1
+        SELECT cv.cantidad, p.precio_base, (cv.cantidad * p.precio_base) as subtotal, 
+               p.nombre, p.imagen_url 
+        FROM carrito_variante cv 
+        JOIN producto p ON cv.id_variante = p.id 
+        WHERE cv.id_carrito = $1
     `, [orderId]);
   res.json({ ...orderResult.rows[0], items: itemsResult.rows });
 });

@@ -1,237 +1,205 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import type { Product } from "../types";
-import { NotFound } from "./NotFound";
 import "./productDetail.css";
-import type { CartItem } from '../types';
-import type { Review } from '../types';
-import { productosAPI, reviewsAPI } from '../services/apiService';
+
+interface Variant {
+    id: number;
+    material: string;
+    precio_extra: number;
+    stock: number;
+}
+
+interface Product {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    precio_base: number;
+    imagen_url: string;
+}
+
+interface CartItem {
+    product: {
+        id: number; // Aquí guardaremos el ID de la VARIANTE
+        name: string;
+        price: number;
+        image: string;
+    };
+    quantity: number;
+    material: string;
+}
 
 export function ProductDetail() {
     const { id } = useParams();
-    const [product, setProduct] = useState<Product | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [hasError, setHasError] = useState(false);
     const navigate = useNavigate();
-    const [cart, setCart] = useState<CartItem[]>([]);
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [selectedColor, setSelectedColor] = useState<"silver" | "rose-gold" | "gold">("gold");
-
-    const addToCartFromDetail = (product: Product): void => {
-        const saved = sessionStorage.getItem("cart");
-        let currentCart: CartItem[] = saved ? JSON.parse(saved) : [];
-
-        const existing = currentCart.find(i => i.product.id === product.id);
-
-        if (existing) {
-            currentCart = currentCart.map(i =>
-                i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
-            );
-        } else {
-            currentCart = [...currentCart, { product, quantity: 1 }];
-        }
-
-        // Guardar el nuevo carrito actualizado en sessionStorage
-        sessionStorage.setItem("cart", JSON.stringify(currentCart));
-        // Actualizar el estado local para mantener coherencia en este componente
-        setCart(currentCart);
-        // Avisar a otros componentes (ej. Header) que el carrito ha sido actualizado
-        window.dispatchEvent(new Event("cartUpdated"));
-
-        alert("¡Producto añadido al carrito correctamente!");
-    };
+    const [product, setProduct] = useState<Product | null>(null);
+    const [variants, setVariants] = useState<Variant[]>([]);
+    const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!id) return;
-        setIsLoading(true);
-        productosAPI.getById(Number(id))
+
+        // 1. Cargar datos básicos del producto
+        fetch(`http://localhost:3000/api/productos/${id}`)
+            .then(res => res.json())
+            .then(data => setProduct(data))
+            .catch(err => console.error("Error al cargar producto:", err));
+
+        // 2. Cargar las variantes (materiales, stock, etc.)
+        fetch(`http://localhost:3000/api/productos/variantes/${id}`)
+            .then(res => res.json())
             .then(data => {
-                const mappedProduct: Product = {
-                    id: data.id,
-                    name: data.nombre,
-                    description: data.descripcion || "",
-                    price: Number(data.precio_base),
-                    category: data.nombre_coleccion || "General",
-                    stock: 10, // Stock se maneja en variante
-                    imageUrl: data.image_url || data.imagen_url || `https://placehold.co/200x200?text=${encodeURIComponent(data.nombre)}`,
-                    active: data.active !== false,
-                };
-                setProduct(mappedProduct);
-                setIsLoading(false);
+                setVariants(data);
+                if (data.length > 0) {
+                    setSelectedVariant(data[0]); // Seleccionamos la primera por defecto
+                }
+                setLoading(false);
             })
-            .catch(() => {
-                setHasError(true);
-                setIsLoading(false);
+            .catch(err => {
+                console.error("Error al cargar variantes:", err);
+                setLoading(false);
             });
     }, [id]);
 
-    const [rating, setRating] = useState<number>(5);
-    const [comment, setComment] = useState<string>("");
+    const addToCartFromDetail = (): void => {
+       // 1. Verificación Crítica: Si no hay variante, no se añade nada
+    if (!selectedVariant) {
+        alert("Por favor, selecciona un material (Oro, Plata, etc.) antes de añadir al carrito.");
+        return;
+    }
 
-    const fetchReviews = () => {
-        if (!id) return;
-        reviewsAPI.getByProducto(Number(id))
-            .then(data => {
-                if (Array.isArray(data)) {
-                    const mappedReviews = data.map((r: any) => ({
-                        id: r.id,
-                        rating: r.valoracion,
-                        comment: r.comentario,
-                        created_at: r.created_at,
-                        username: "Usuario",
-                    }));
-                    setReviews(mappedReviews);
-                } else {
-                    setReviews([]);
-                }
-            })
-            .catch(() => setReviews([]));
-    };
+    const saved = sessionStorage.getItem("cart");
+    let currentCart: CartItem[] = saved ? JSON.parse(saved) : [];
 
-    useEffect(() => {
-        fetchReviews();
-    }, [id]);
 
-    const submitReview = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!id) return;
-        reviewsAPI.create({
-            id_producto: Number(id),
-            id_usuario: 1, // usuario simulado
-            valoracion: rating,
-            titulo: "Reseña",
-            comentario: comment
-        })
-            .then(() => {
-                fetchReviews();
-                setComment("");
-                setRating(5);
-            })
-            .catch((err) => console.error("Error al crear reseña:", err));
+    const precioFinal = Number(product.precio_base) + Number(selectedVariant.precio_extra);
+
+    const itemToAdd: CartItem = {
+        product: {
+            // ENVIAMOS EL ID DE LA VARIANTE, NO DEL PRODUCTO
+            id: selectedVariant.id, 
+            name: product.nombre,
+            price: Number(product.precio_base) + Number(selectedVariant.precio_extra),
+            image: product.imagen_url
+        },
+        quantity: 1,
+        material: selectedVariant.material
     };
 
 
-    if (isLoading) {
-        return <div style={{ textAlign: 'center', padding: '3rem' }}>Cargando detalles del producto...</div>;
-    }
+        
 
-    if (hasError || !product) {
-        return <NotFound />;
-    }
+        const existingIndex = currentCart.findIndex(i => i.product.id === itemToAdd.product.id);
+
+        if (existingIndex !== -1) {
+            currentCart[existingIndex].quantity += 1;
+        } else {
+            currentCart.push(itemToAdd);
+        }
+
+        sessionStorage.setItem("cart", JSON.stringify(currentCart));
+        
+        // Avisar al Header para que actualice el contador de la cesta
+        window.dispatchEvent(new Event("cartUpdated"));
+        alert(`¡${product.nombre} (${selectedVariant.material}) añadido al carrito!`);
+    };
+
+    if (loading) return (
+        <div className="product-loading">
+            <div className="spinner"></div>
+            <p>Preparando tu joya...</p>
+        </div>
+    );
+    
+    if (!product) return (
+        <div className="product-error">
+            <h2>Vaya, no hemos encontrado esa joya</h2>
+            <button onClick={() => navigate('/')}>Volver al catálogo</button>
+        </div>
+    );
+
+    const precioMostrar = selectedVariant 
+        ? (Number(product.precio_base) + Number(selectedVariant.precio_extra)).toFixed(2)
+        : Number(product.precio_base).toFixed(2);
 
     return (
-        <div className="product-page-wrapper">
-            <div className="product-detail-card">
-                <div className="product-image-box">
-                    <img src={product.imageUrl} alt={product.name} />
+        <div className="product-detail-container">
+            <div className="product-detail-grid">
+                {/* Columna Izquierda: Imagen */}
+                <div className="product-image-section">
+                    <div className="image-wrapper">
+                        <img src={product.imagen_url} alt={product.nombre} className="main-product-image" />
+                    </div>
                 </div>
-                <div className="product-details-box">
-                    <button className="btn-favorite">♡</button>
-                    <h1 className="product-title">{product.name}</h1>
-                    <p className="product-desc">{product.description}</p>
 
-                    <div className="product-colors">
-                        <button 
-                            className={`color-btn silver ${selectedColor === "silver" ? "selected" : ""}`}
-                            onClick={() => setSelectedColor("silver")}
-                            title="Plata"
-                        ></button>
-                        <button 
-                            className={`color-btn rose-gold ${selectedColor === "rose-gold" ? "selected" : ""}`}
-                            onClick={() => setSelectedColor("rose-gold")}
-                            title="Oro Rosado"
-                        ></button>
-                        <button 
-                            className={`color-btn gold ${selectedColor === "gold" ? "selected" : ""}`}
-                            onClick={() => setSelectedColor("gold")}
-                            title="Oro"
-                        ></button>
+                {/* Columna Derecha: Info y Selección */}
+                <div className="product-info-section">
+                    <div className="product-header">
+                        <h1 className="product-title">{product.nombre}</h1>
+                        <div className="price-tag">{precioMostrar}€</div>
+                    </div>
+                    
+                    <div className="product-description">
+                        <span className="section-label">Descripción</span>
+                        <p>{product.descripcion}</p>
                     </div>
 
-                    <div className="product-bottom-row">
-                        <button className="btn-personalize">PERSONALIZAR</button>
-                        <div className="price-cart-col">
-                            <span className="product-price-large">{product.price}€</span>
-                            <button className="btn-add-cart" onClick={() => addToCartFromDetail(product)} disabled={product.stock === 0}>Add to Cart</button>
+                    <div className="variants-section">
+                        <span className="section-label">Material</span>
+                        <div className="material-options">
+                            {variants.map(v => (
+                                <button 
+                                    key={v.id}
+                                    className={`material-btn ${selectedVariant?.id === v.id ? 'active' : ''}`}
+                                    onClick={() => setSelectedVariant(v)}
+                                >
+                                    <span className="material-dot" style={{ backgroundColor: getMaterialColor(v.material) }}></span>
+                                    {v.material}
+                                </button>
+                            ))}
                         </div>
                     </div>
+
+                    <div className="stock-info">
+                        {selectedVariant && (
+                            <div className={`stock-badge ${selectedVariant.stock > 0 ? "in-stock" : "out-of-stock"}`}>
+                                <span className="stock-dot"></span>
+                                {selectedVariant.stock > 0 
+                                    ? `En stock: ${selectedVariant.stock} unidades` 
+                                    : "Agotado"}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="actions-section">
+                        <button 
+                            className="btn-add-to-cart" 
+                            onClick={addToCartFromDetail}
+                            disabled={!selectedVariant || selectedVariant.stock <= 0}
+                        >
+                            Añadir a la cesta
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z" />
+                                <path d="M3 6h18" />
+                                <path d="M16 10a4 4 0 01-8 0" />
+                            </svg>
+                        </button>
+                        <button className="btn-go-back" onClick={() => navigate(-1)}>
+                            Volver
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <div className="product-actions-extra">
-                <button className="product-detail_back" onClick={() => navigate('/')}>Volver al catálogo</button>
-            </div>
-
-            <div className="reviews-section">
-                <h3>Reseñas</h3>
-                {reviews.length > 0 ? (
-                    <ul className="reviews-list">
-                        {reviews.map(r => (
-                            <li key={r.id}>
-                                <strong>{r.username || "User"}</strong> - <span style={{ color: "gold" }}>{"★".repeat(r.rating)}</span>{"☆".repeat(5 - r.rating)}
-                                <p>{r.comment}</p>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No reviews yet.</p>
-                )}
-
-                <form onSubmit={submitReview} className="review-form">
-                    <h4>Leave your review</h4>
-                    <label>
-                        Valoración:
-                        <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-                            {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n} estrela{n > 1 ? 's' : ''}</option>)}
-                        </select>
-                    </label>
-                    <label>
-                        Comment:
-                        <textarea value={comment} onChange={(e) => setComment(e.target.value)} required />
-                    </label>
-                    <button type="submit">Send review</button>
-                </form>
-            </div>
         </div>
     );
 }
-/*
-import type { Product } from "../types";
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import "./productDetail.css";
 
-/*
-interface ProductDetailProps {
-    product: Product;
-    onClose?: () => void;
-}
-   
-
-export function ProductDetail() {
-    const { id } = useParams();
-    const [product, setProduct] = useState<Product | null>(null);
-    const navigate = useNavigate();
-    useEffect(() => {
-        fetch(`http://localhost:3000/api/products/${id}`)
-            .then(res => res.json())
-            .then(data => setProduct(data))
-    }, [id]);
-
-    if (!product) {
-        return <div>Cargando...</div>;
-    }
-
-    return (
-        <div className="product-detail">
-            <img className="product-image" src={product.imageUrl} alt={product.name} />
-            <h2 className="product-name">{product.name}</h2>
-            <p className="product-price">{product.price}</p>
-            <p className={`product-stock ${product.stock > 0 ? "in-stock" : "out-of-stock"}`}>
-                {product.stock > 0 ? `En Stock - ${product.stock} unidades` : "Sin Stock- 0 unidades"}
-            </p>
-            <button className="product-detail_back" onClick={() => navigate('/')}>Volver al catálogo</button>
-        </div>
-    );
-}
-*/
+function getMaterialColor(material: string) {
+    const m = material.toLowerCase();
+    if (m.includes("oro") && m.includes("rosa")) return "#e7accf";
+    if (m.includes("oro")) return "#d4af37";
+    if (m.includes("plata")) return "#c0c0c0";
+    if (m.includes("diamante")) return "#e5e5e5";
+    return "#333";
+}

@@ -38,7 +38,11 @@ export const productosAPI = {
   delete: async (id: number) => {
     const res = await fetch(`${API_BASE_URL}/productos/${id}`, fetchOptions('DELETE'));
     return handleResponse(res);
-  }
+  },
+  getVariantes: async (idProducto: number) => {
+    const res = await fetch(`${API_BASE_URL}/productos/variantes/${idProducto}`, fetchOptions());
+    return handleResponse(res);
+  },
 };
 
 // ==================== COLECCIONES ====================

@@ -1,5 +1,5 @@
 export type RolUsuario = 'cliente' | 'empleado' | 'admin';
-export type TipoFichaje = 'empleado' | 'admin';
+export type TipoFichaje = 'entrada' | 'salida';
 
 export interface Usuario {
   id?: number; //Es opcional porque al crearlo aun no tiene ID
@@ -73,7 +73,7 @@ export interface CarritoVariante {
 export interface Fichaje {
   id?: number;
   id_usuario: number;
-  tipo: TipoFichaje; //Restringido a 'empleado' o 'admin'
+  tipo: TipoFichaje; //Restringido a 'entrada' o 'salida'
   nota?: string;
   fecha?: Date;
 }
